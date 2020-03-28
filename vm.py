@@ -1,7 +1,7 @@
 #!/usr/bin/env python
-import subprocess
 import argparse
 import re
+import subprocess
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -9,7 +9,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     disk = args.drive
 
-    subprocess.run(["parted", "-s", disk, "mklabel", "gpt"], check=True)
+    subprocess.run(["parted", "-s", disk, "mklabel", "msdos"], check=True)
     subprocess.run([
         "parted", "-s", "-a", "optimal", disk, "mkpart", "primary",
         "linux-swap", "0%", "200MiB"
@@ -39,6 +39,8 @@ if __name__ == "__main__":
             "pacstrap", "/mnt", "base", "base-devel", "linux", "linux-firmware"
         ],
                        check=True)
+
+        # use retries for reflector
         subprocess.run([
             "reflector", "--age", "12", "--country", "Germany", "--protocol",
             "https", "--sort", "rate", "--save", "/mnt/etc/pacman.d/mirrorlist"
@@ -66,6 +68,8 @@ if __name__ == "__main__":
             "arch-chroot", "/mnt", "grub-mkconfig", "-o", "/boot/grub/grub.cfg"
         ],
                        check=True)
+
+        subprocess.run(["arch-chroot", "/mnt", "mkinitcpio", "-P", "-v"])
     finally:
         subprocess.run(["umount", disk + "2"])
         subprocess.run(["swapoff", disk + "1"])
