@@ -39,9 +39,6 @@ if __name__ == "__main__":
     fs.create_fs_swap(disk + "1", "arch_swap")
     fs.create_fs_ext4(disk + "2", "arch_ext4")
 
-    mount.swapon(disk + "1")
-    cmd.run(["mount", disk + "2", "/mnt"])
-
     with mount.Swap(disk + "1"), mount.Mount(disk + "2", "/mnt"):
         subprocess.run([
             "reflector", "--age", "12", "--country", "Germany", "--protocol",
