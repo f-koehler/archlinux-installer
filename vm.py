@@ -42,7 +42,7 @@ if __name__ == "__main__":
     mount.swapon(disk + "1")
     cmd.run(["mount", disk + "2", "/mnt"])
 
-    try:
+    with mount.Swap(disk + "1"), mount.Mount(disk + "2", "/mnt"):
         subprocess.run([
             "reflector", "--age", "12", "--country", "Germany", "--protocol",
             "https", "--sort", "rate", "--save", "/etc/pacman.d/mirrorlist"
@@ -72,6 +72,3 @@ if __name__ == "__main__":
         cmd.run_chroot(["grub-mkconfig", "-o", "/boot/grub/grub.cfg"])
 
         mkinitcpio()
-    finally:
-        mount.umount(disk + "2")
-        mount.swapoff(disk + "1")
