@@ -111,13 +111,8 @@ if __name__ == "__main__":
                        check=True)
 
         pacstrap(["grub", "os-prober", "ntfs-3g"])
-        subprocess.run(
-            ["arch-chroot", "/mnt", "grub-install", "--target=i386-pc", disk],
-            check=True)
-        subprocess.run([
-            "arch-chroot", "/mnt", "grub-mkconfig", "-o", "/boot/grub/grub.cfg"
-        ],
-                       check=True)
+        run_chroot(["grub-install", "--target=i386-pc", disk])
+        run_chroot(["grub-mkconfig", "-o", "/boot/grub/grub.cfg"])
 
         mkinitcpio()
     finally:
