@@ -16,7 +16,7 @@ def mount(device: Union[str, Path], mountpoint: Union[str, Path]):
 
 
 def umount(path: Union[str, Path]):
-    LOGGER.info("unmount: %s", str(device))
+    LOGGER.info("unmount: %s", str(path))
     run(["umount", str(path)])
 
 
