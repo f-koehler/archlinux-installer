@@ -5,7 +5,7 @@ import subprocess
 from pathlib import Path
 from typing import List, Optional, Union
 
-from archinst import cmd, fs, mount, part
+from archinst import cmd, fs, mount, part, reflector
 
 
 def mkinitcpio(root: Union[str, Path] = "/mnt"):
@@ -39,11 +39,10 @@ if __name__ == "__main__":
     fs.create_fs_swap(disk + "1", "arch_swap")
     fs.create_fs_ext4(disk + "2", "arch_ext4")
 
+    reflector.run_reflector(False, "Germany")
+
     with mount.Swap(disk + "1"), mount.Mount(disk + "2", "/mnt"):
-        cmd.run([
-            "reflector", "--age", "12", "--country", "Germany", "--protocol",
-            "https", "--sort", "rate", "--save", "/etc/pacman.d/mirrorlist"
-        ])
+        reflector.run_reflector(True, "Germany")
 
         pacstrap(["base", "base-devel", "linux", "linux-firmware"])
 
