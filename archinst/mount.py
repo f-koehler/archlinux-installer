@@ -15,7 +15,7 @@ def mount(device: Union[str, Path], mountpoint: Union[str, Path]):
     run(["mount", device, mountpoint])
 
 
-def umount(path: Union[str, Path]):
+def unmount(path: Union[str, Path]):
     LOGGER.info("unmount: %s", str(path))
     run(["umount", str(path)])
 
@@ -33,7 +33,7 @@ def swapoff(device: Union[str, Path]):
 @contextmanager
 def Mount(device: Union[str, Path], mountpoint: Union[str, Path]):
     try:
-        mount(device, mountpoint)
+        yield mount(device, mountpoint)
     finally:
         unmount(mountpoint)
 
@@ -41,6 +41,6 @@ def Mount(device: Union[str, Path], mountpoint: Union[str, Path]):
 @contextmanager
 def Swap(device: Union[str, Path]):
     try:
-        swapon(device)
+        yield swapon(device)
     finally:
         swapoff(device)
