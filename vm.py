@@ -42,9 +42,8 @@ if __name__ == "__main__":
     reflector.run_reflector(False, "Germany")
 
     with mount.Swap(disk + "1"), mount.Mount(disk + "2", "/mnt"):
-        reflector.run_reflector(True, "Germany")
-
         pacstrap(["base", "base-devel", "linux", "linux-firmware"])
+        reflector.run_reflector(True, "Germany")
 
         # use retries for reflector
         cmd.run([
