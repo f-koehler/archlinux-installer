@@ -40,11 +40,10 @@ if __name__ == "__main__":
     fs.create_fs_ext4(disk + "2", "arch_ext4")
 
     with mount.Swap(disk + "1"), mount.Mount(disk + "2", "/mnt"):
-        subprocess.run([
+        cmd.run([
             "reflector", "--age", "12", "--country", "Germany", "--protocol",
             "https", "--sort", "rate", "--save", "/etc/pacman.d/mirrorlist"
-        ],
-                       check=True)
+        ])
 
         pacstrap(["base", "base-devel", "linux", "linux-firmware"])
 
