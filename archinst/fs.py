@@ -29,6 +29,18 @@ def create_fs_btrfs(device: Union[str, Path], label: Optional[str] = None):
     run(cmd)
 
 
+def create_fs_vfat32(device: Union[str, Path], label: Optional[str] = None):
+    cmd = ["mkfs.vfat", "-F", "32"]
+    if label:
+        cmd.append("-n")
+        if len(label) > 11:
+            cmd.append(label[:11])
+        else:
+            cmd.append(label)
+    cmd.append(str(device))
+    run(cmd)
+
+
 def create_btrfs_subvolume(path: Union[str, Path]):
     run(["btrfs", "subvolume", "create", str(path)])
 
