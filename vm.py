@@ -5,12 +5,7 @@ import subprocess
 from pathlib import Path
 from typing import List, Optional, Union
 
-from archinst import cmd, fs, grub, mount, part, pkg, reflector, time
-
-
-def mkinitcpio(root: Union[str, Path] = "/mnt"):
-    cmd.run_chroot(["mkinitcpio", "-v", "-P"], root)
-
+from archinst import cmd, fs, grub, initcpio, mount, part, pkg, reflector, time
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -30,7 +25,7 @@ if __name__ == "__main__":
     ])
 
     fs.create_fs_swap(disk + "1", "arch_swap")
-    fs.create_fs_ext4(disk + "2", "arch_ext4")
+    fs.create_fs_ext4(disk + "2", "arch_root")
 
     reflector.run_reflector(False, "Germany")
 
@@ -40,5 +35,5 @@ if __name__ == "__main__":
         fs.generate_fs_table()
         time.set_timezone("Europe/Berlin")
         time.enable_ntp()
-        mkinitcpio()
+        initcpio.mkinitcpio()
         grub.install_grub_bios(disk)
