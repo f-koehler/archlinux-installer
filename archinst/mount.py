@@ -1,18 +1,28 @@
 from contextlib import contextmanager
 from logging import getLogger
 from pathlib import Path
-from typing import Union
+from typing import List, Optional, Union
 
 from archinst.cmd import run
 
 LOGGER = getLogger(__name__)
 
 
-def mount(device: Union[str, Path], mountpoint: Union[str, Path]):
+def mount(device: Union[str, Path],
+          mountpoint: Union[str, Path],
+          options: Optional[List[str]] = None):
     LOGGER.info("mount: %s", str(device))
     device = str(device)
     mountpoint = str(mountpoint)
-    run(["mount", device, mountpoint])
+
+    Path(mountpoint).mkdir(parents=True, exist_ok=True)
+
+    command = ["mount"]
+    if options:
+        command.append("-o")
+        command += options
+    command += [device, mountpoint]
+    run(command)
 
 
 def unmount(path: Union[str, Path]):
@@ -31,9 +41,11 @@ def swapoff(device: Union[str, Path]):
 
 
 @contextmanager
-def Mount(device: Union[str, Path], mountpoint: Union[str, Path]):
+def Mount(device: Union[str, Path],
+          mountpoint: Union[str, Path],
+          options: Optional[List[str]] = None):
     try:
-        yield mount(device, mountpoint)
+        yield mount(device, mountpoint, options)
     finally:
         unmount(mountpoint)
 

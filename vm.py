@@ -23,11 +23,22 @@ if __name__ == "__main__":
     fs.create_fs_swap(disk + "1", "arch_swap")
     fs.create_fs_btrfs(disk + "2", "arch_root")
 
+    with mount.Mount(disk + "2", "/mnt"):
+        fs.create_btrfs_subvolume("/mnt/@")
+        fs.create_btrfs_subvolume("/mnt/@home")
+        fs.create_btrfs_subvolume("/mnt/@snapshots")
+
     reflector.run_reflector(False, "Germany")
 
-    with mount.Swap(disk + "1"), mount.Mount(disk + "2", "/mnt"):
-        pkg.pacstrap(
-            ["base", "base-devel", "linux", "linux-firmware", "btrfs-progs"])
+    with mount.Swap(disk + "1"), mount.Mount(
+            disk + "2", "/mnt", ["subvol=@"]), mount.Mount(
+                disk + "2", "/mnt/home",
+                ["subvol=@home"]), mount.Mount(disk + "2", "/mnt/.snapshots",
+                                               ["subvol=@snapshots"]):
+        pkg.pacstrap([
+            "base", "base-devel", "linux", "linux-firmware", "btrfs-progs",
+            "grub-btrfs"
+        ])
         reflector.run_reflector(True, "Germany")
         fs.generate_fs_table()
         time.set_timezone("Europe/Berlin")

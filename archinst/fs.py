@@ -26,6 +26,11 @@ def create_fs_btrfs(device: Union[str, Path], label: Optional[str] = None):
     if label:
         cmd += ["-L", label]
     cmd.append(str(device))
+    run(cmd)
+
+
+def create_btrfs_subvolume(path: Union[str, Path]):
+    run(["btrfs", "subvolume", "create", str(path)])
 
 
 def generate_fs_table():
