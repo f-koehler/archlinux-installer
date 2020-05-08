@@ -9,9 +9,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
     disk = args.drive
 
-    part.clear_disk(disk, "msdos")
+    part.clear_disk(disk, "gpt")
     cmd.run([
-        "parted", "-s", "-a", "optimal", disk, "mkpart", "primary", "ext4",
+        "parted", "-s", "-a", "optimal", disk, "mkpart", "primary", "fat32",
         "0%", "200MiB"
     ])
     cmd.run([
@@ -23,7 +23,7 @@ if __name__ == "__main__":
         "2000MiB", "100%"
     ])
 
-    fs.create_fs_ext4(disk + "1", "arch_boot")
+    fs.create_fs_vfat32(disk + "1", "efi")
     fs.create_fs_swap(disk + "2", "arch_swap")
     fs.create_fs_btrfs(disk + "3", "arch_root")
 
@@ -40,7 +40,7 @@ if __name__ == "__main__":
                                    ["subvol=@home"]), mount.Mount(
                                        disk + "3", "/mnt/.snapshots",
                                        ["subvol=@snapshots"]), mount.Mount(
-                                           disk + "1", "/mnt/boot"):
+                                           disk + "1", "/mnt/boot/efi"):
         pkg.pacstrap([
             "base", "base-devel", "linux", "linux-firmware", "btrfs-progs",
             "grub-btrfs"
@@ -50,4 +50,4 @@ if __name__ == "__main__":
         time.set_timezone("Europe/Berlin")
         time.enable_ntp()
         initcpio.mkinitcpio()
-        grub.install_grub_bios(disk)
+        grub.install_grub_efi(disk)
