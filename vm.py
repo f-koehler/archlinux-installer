@@ -60,8 +60,8 @@ if __name__ == "__main__":
         ])
         cmd.run_chroot(["hwclock", "--systohc"])
 
+        mkinitcpio()
+
         pacstrap(["grub", "os-prober", "ntfs-3g"])
         cmd.run_chroot(["grub-install", "--target=i386-pc", disk])
         cmd.run_chroot(["grub-mkconfig", "-o", "/boot/grub/grub.cfg"])
-
-        mkinitcpio()
