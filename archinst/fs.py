@@ -1,3 +1,4 @@
+import subprocess
 from pathlib import Path
 from typing import Optional, Union
 
@@ -18,3 +19,9 @@ def create_fs_swap(device: Union[str, Path], label: Optional[str] = None):
         cmd += ["-L", label]
     cmd.append(str(device))
     run(cmd)
+
+
+def generate_fs_table():
+    fstab = subprocess.check_output(["genfstab", "-U", "/mnt"]).decode()
+    with open("/mnt/etc/fstab", "a") as fptr:
+        fptr.write(fstab)
