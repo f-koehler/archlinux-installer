@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 import argparse
 
-from archinst import cmd, fs, grub, initcpio, mount, part, pkg, reflector, time
+from archinst import (cmd, fs, git, grub, initcpio, mount, part, pkg,
+                      reflector, time, user)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -51,3 +52,9 @@ if __name__ == "__main__":
         time.enable_ntp()
         initcpio.mkinitcpio()
         grub.install_grub_efi(disk)
+
+        user.add_normal_user("fkoehler")
+        git.clone("git@github.com:f-koehler/playbooks.git",
+                  "/home/fkoehler/code/playbooks")
+        git.clone("git@github.com:f-koehler/dotfiles.git",
+                  "/home/fkoehler/code/dotfiles")
