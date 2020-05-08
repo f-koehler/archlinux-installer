@@ -11,4 +11,4 @@ def set_timezone(name: str = "Europe/Berlin"):
 
 
 def enable_ntp():
-    run_chroot(["timedatctl", "set-ntp", "true"])
+    run_chroot(["timedatectl", "set-ntp", "true"])
