@@ -11,30 +11,36 @@ if __name__ == "__main__":
 
     part.clear_disk(disk, "msdos")
     cmd.run([
-        "parted", "-s", "-a", "optimal", disk, "mkpart", "primary",
-        "linux-swap", "0%", "200MiB"
-    ])
-
-    cmd.run([
         "parted", "-s", "-a", "optimal", disk, "mkpart", "primary", "ext4",
-        "200MiB", "100%"
+        "0%", "200MiB"
+    ])
+    cmd.run([
+        "parted", "-s", "-a", "optimal", disk, "mkpart", "primary",
+        "linux-swap", "200MiB", "2000MiB"
+    ])
+    cmd.run([
+        "parted", "-s", "-a", "optimal", disk, "mkpart", "primary", "btrfs",
+        "2000MiB", "100%"
     ])
 
-    fs.create_fs_swap(disk + "1", "arch_swap")
-    fs.create_fs_btrfs(disk + "2", "arch_root")
+    fs.create_fs_ext4(disk + "1", "arch_boot")
+    fs.create_fs_swap(disk + "2", "arch_swap")
+    fs.create_fs_btrfs(disk + "3", "arch_root")
 
-    with mount.Mount(disk + "2", "/mnt"):
+    with mount.Mount(disk + "3", "/mnt"):
         fs.create_btrfs_subvolume("/mnt/@")
         fs.create_btrfs_subvolume("/mnt/@home")
         fs.create_btrfs_subvolume("/mnt/@snapshots")
 
     reflector.run_reflector(False, "Germany")
 
-    with mount.Swap(disk + "1"), mount.Mount(
-            disk + "2", "/mnt", ["subvol=@"]), mount.Mount(
-                disk + "2", "/mnt/home",
-                ["subvol=@home"]), mount.Mount(disk + "2", "/mnt/.snapshots",
-                                               ["subvol=@snapshots"]):
+    with mount.Swap(disk + "2"), mount.Mount(
+            disk + "3", "/mnt",
+        ["subvol=@"]), mount.Mount(disk + "3", "/mnt/home",
+                                   ["subvol=@home"]), mount.Mount(
+                                       disk + "3", "/mnt/.snapshots",
+                                       ["subvol=@snapshots"]), mount.Mount(
+                                           disk + "1", "/mnt/boot"):
         pkg.pacstrap([
             "base", "base-devel", "linux", "linux-firmware", "btrfs-progs",
             "grub-btrfs"
