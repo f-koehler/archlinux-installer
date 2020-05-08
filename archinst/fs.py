@@ -21,6 +21,13 @@ def create_fs_swap(device: Union[str, Path], label: Optional[str] = None):
     run(cmd)
 
 
+def create_fs_btrfs(device: Union[str, Path], label: Optional[str] = None):
+    cmd = ["mkfs.btrfs", "-f"]
+    if label:
+        cmd += ["-L", label]
+    cmd.append(str(device))
+
+
 def generate_fs_table():
     fstab = subprocess.check_output(["genfstab", "-U", "/mnt"]).decode()
     with open("/mnt/etc/fstab", "a") as fptr:

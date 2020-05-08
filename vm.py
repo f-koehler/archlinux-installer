@@ -21,12 +21,13 @@ if __name__ == "__main__":
     ])
 
     fs.create_fs_swap(disk + "1", "arch_swap")
-    fs.create_fs_ext4(disk + "2", "arch_root")
+    fs.create_fs_btrfs(disk + "2", "arch_root")
 
     reflector.run_reflector(False, "Germany")
 
     with mount.Swap(disk + "1"), mount.Mount(disk + "2", "/mnt"):
-        pkg.pacstrap(["base", "base-devel", "linux", "linux-firmware"])
+        pkg.pacstrap(
+            ["base", "base-devel", "linux", "linux-firmware", "btrfs-progs"])
         reflector.run_reflector(True, "Germany")
         fs.generate_fs_table()
         time.set_timezone("Europe/Berlin")
