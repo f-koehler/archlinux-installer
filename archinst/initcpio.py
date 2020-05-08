@@ -1,4 +1,4 @@
-from cmd import run_chroot
+from archinst.cmd import run_chroot
 
 
 def mkinitcpio():
