@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 import argparse
-import re
-import subprocess
-from pathlib import Path
-from typing import List, Optional, Union
 
 from archinst import cmd, fs, grub, initcpio, mount, part, pkg, reflector, time
 
