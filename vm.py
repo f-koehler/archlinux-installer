@@ -12,7 +12,7 @@ if __name__ == "__main__":
 
     layout = part.PartitionLayout()
     layout.append("fat32", "200MiB")
-    layout.append("linux-swap", "200MiB")
+    layout.append("linux-swap", "2000MiB")
     layout.append("btrfs", "100%")
     layout.apply(disk)
 
