@@ -1,4 +1,5 @@
 import subprocess
+import sys
 from pathlib import Path
 from typing import Union
 
@@ -10,4 +11,8 @@ def create_luks_container(device: Union[str, Path], password: str):
         "--key-size", "512", "--hash", "sha256", "--iter-time", "5000",
         "--use-urandom", "--keyfile", "-"
     ]
-    subprocess.run(command, check=True, stdin=password.encode())
+    process = subprocess.Popen(command,
+                               stderr=sys.stderr,
+                               stdout=sys.stdout,
+                               stdin=subprocess.PIPE)
+    process.communicate(input=password)
