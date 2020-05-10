@@ -81,3 +81,4 @@ class BtrfsSubvolumes:
                 continue
             mounts.append((partition, subvolume[1][0],
                            ["subvol=" + str(subvolume[0])] + subvolume[1][1]))
+        return mount_list(mounts)
