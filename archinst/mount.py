@@ -9,7 +9,7 @@ LOGGER = getLogger(__name__)
 
 
 def sync():
-    run([sync])
+    run(["sync"])
 
 
 def mount(device: Union[str, Path],
