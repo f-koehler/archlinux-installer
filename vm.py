@@ -28,10 +28,7 @@ if __name__ == "__main__":
 
     reflector.run_reflector(False, "Germany")
 
-    with mount.mount_list([(disk + "3", "/mnt", ["subvol=@"]),
-                           (disk + "3", "/mnt/home", ["subvol=@home"]),
-                           (disk + "3", "/mnt/.snapshots",
-                            ["subvol=@snapshots"])]), layout.mount(disk):
+    with subvolumes.mount(disk + "3"), layout.mount(disk):
         pkg.pacstrap([
             "base", "base-devel", "linux", "linux-firmware", "btrfs-progs",
             "grub-btrfs"

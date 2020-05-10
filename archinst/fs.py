@@ -70,8 +70,14 @@ class BtrfsSubvolumes:
                 for subvolume in self.subvolumes:
                     create_btrfs_subvolume(Path(tmpdir) / subvolume[0])
 
-    def mount(self, path: Union[str, Path]):
+    def mount(self, partition: Union[str, Path]):
         mounts: List[MountEntry] = []
         for subvolume in self.subvolumes:
             if subvolume[1] is None:
                 continue
+            if isinstance(subvolume[1], str):
+                mounts.append(
+                    (partition, subvolume[1], ["subvol=" + str(subvolume[0])]))
+                continue
+            mounts.append((partition, subvolume[1][0],
+                           ["subvol=" + str(subvolume[0])] + subvolume[1][1]))
