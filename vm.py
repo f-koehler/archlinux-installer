@@ -11,8 +11,8 @@ if __name__ == "__main__":
     disk = args.drive
 
     layout = part.PartitionLayout()
-    layout.append("fat32", "200MiB")
-    layout.append("linux-swap", "2000MiB")
+    layout.append("fat32", "200MiB", "/mnt/boot/efi")
+    layout.append("linux-swap", "2000MiB", "[SWAP]")
     layout.append("btrfs", "100%")
     layout.apply(disk)
 
@@ -27,12 +27,10 @@ if __name__ == "__main__":
 
     reflector.run_reflector(False, "Germany")
 
-    with mount.mount_list([(disk + "2", "[SWAP]"),
-                          (disk + "3", "/mnt", ["subvol=@"]),
-                          (disk + "3", "/mnt/home", ["subvol=@home"]),
-                          (disk + "3",
-                           "/mnt/.snapshots", ["subvol=@snapshots"]),
-                          (disk + "1", "/mnt/boot/efi")]):
+    with mount.mount_list([(disk + "3", "/mnt", ["subvol=@"]),
+                           (disk + "3", "/mnt/home", ["subvol=@home"]),
+                           (disk + "3", "/mnt/.snapshots",
+                            ["subvol=@snapshots"])]), layout.mount():
         pkg.pacstrap([
             "base", "base-devel", "linux", "linux-firmware", "btrfs-progs",
             "grub-btrfs"

@@ -7,6 +7,9 @@ from archinst.cmd import run
 
 LOGGER = getLogger(__name__)
 
+MountEntry = Union[Tuple[Union[str, Path], Union[str, Path]],
+                   Tuple[Union[str, Path], Union[str, Path], List[str]]]
+
 
 def sync():
     run(["sync"])
@@ -63,9 +66,7 @@ def mount_single(device: Union[str, Path],
 
 
 @contextmanager
-def mount_list(entries: List[Union[Tuple[Union[str, Path], Union[str, Path]],
-                                   Tuple[Union[str, Path], Union[str, Path],
-                                         List[str]]]]):
+def mount_list(entries: List[MountEntry]):
     try:
         for entry in entries:
             if entry[1] == "[SWAP]":
