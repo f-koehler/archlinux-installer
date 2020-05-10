@@ -8,6 +8,10 @@ from archinst.cmd import run
 LOGGER = getLogger(__name__)
 
 
+def sync():
+    run([sync])
+
+
 def mount(device: Union[str, Path],
           mountpoint: Union[str, Path],
           options: Optional[List[str]] = None):
@@ -27,6 +31,7 @@ def mount(device: Union[str, Path],
 
 def unmount(path: Union[str, Path]):
     LOGGER.info("unmount: %s", str(path))
+    sync()
     run(["umount", str(path)])
 
 
@@ -37,6 +42,7 @@ def swapon(device: Union[str, Path]):
 
 def swapoff(device: Union[str, Path]):
     LOGGER.info("swapoff: %s", str(device))
+    sync()
     run(["swapoff", str(device)])
 
 
@@ -68,7 +74,7 @@ def MountList(entries: List[Union[Tuple[Union[str, Path], Union[str, Path]],
                 mount(*entry)
         yield
     finally:
-        for entry in entries:
+        for entry in entries[::-1]:
             try:
                 if entry[1] == "[SWAP]":
                     swapoff(entry[0])
