@@ -32,11 +32,12 @@ def create_fs_btrfs(device: Union[str, Path], label: Optional[str] = None):
 def create_fs_vfat32(device: Union[str, Path], label: Optional[str] = None):
     cmd = ["mkfs.vfat", "-F", "32"]
     if label:
+
         cmd.append("-n")
         if len(label) > 11:
-            cmd.append(label[:11])
+            cmd.append(label[:11].upper())
         else:
-            cmd.append(label)
+            cmd.append(label.upper())
     cmd.append(str(device))
     run(cmd)
 
