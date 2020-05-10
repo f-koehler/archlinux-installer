@@ -63,7 +63,7 @@ def MountList(entries: List[Union[Tuple[Union[str, Path], Union[str, Path]],
     try:
         for entry in entries:
             if entry[1] == "[SWAP]":
-                swapon(*entry)
+                swapon(entry[0])
             else:
                 mount(*entry)
         yield
@@ -71,7 +71,7 @@ def MountList(entries: List[Union[Tuple[Union[str, Path], Union[str, Path]],
         for entry in entries:
             try:
                 if entry[1] == "[SWAP]":
-                    swapoff(*entry)
+                    swapoff(entry[0])
                 else:
                     unmount(entry[1])
             except:
