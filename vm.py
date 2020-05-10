@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import argparse
 
-from archinst import (cmd, fs, git, grub, initcpio, mount, part, pkg,
+from archinst import (cmd, crypt, fs, git, grub, initcpio, mount, part, pkg,
                       reflector, time, user)
 
 if __name__ == "__main__":
@@ -20,24 +20,26 @@ if __name__ == "__main__":
     fs.create_fs_swap(disk + "2", "arch_swap")
     fs.create_fs_btrfs(disk + "3", "arch_root")
 
-    subvolumes = fs.BtrfsSubvolumes()
-    subvolumes.add("@", "/mnt/")
-    subvolumes.add("@home", "/mnt/home")
-    subvolumes.add("@snapshots", "/mnt/.snapshots")
-    subvolumes.apply(disk + "3")
+    crypt.create_luks_container(disk + "3", "test")
 
-    reflector.run_reflector(False, "Germany")
+    # subvolumes = fs.BtrfsSubvolumes()
+    # subvolumes.add("@", "/mnt/")
+    # subvolumes.add("@home", "/mnt/home")
+    # subvolumes.add("@snapshots", "/mnt/.snapshots")
+    # subvolumes.apply(disk + "3")
 
-    with subvolumes.mount(disk + "3"), layout.mount(disk):
-        pkg.pacstrap([
-            "base", "base-devel", "linux", "linux-firmware", "btrfs-progs",
-            "grub-btrfs"
-        ])
-        reflector.run_reflector(True, "Germany")
-        fs.generate_fs_table()
-        time.set_timezone("Europe/Berlin")
-        time.enable_ntp()
-        initcpio.mkinitcpio()
-        grub.install_grub_efi(disk)
+    # reflector.run_reflector(False, "Germany")
 
-        user.add_normal_user("fkoehler")
+    # with subvolumes.mount(disk + "3"), layout.mount(disk):
+    #     pkg.pacstrap([
+    #         "base", "base-devel", "linux", "linux-firmware", "btrfs-progs",
+    #         "grub-btrfs"
+    #     ])
+    #     reflector.run_reflector(True, "Germany")
+    #     fs.generate_fs_table()
+    #     time.set_timezone("Europe/Berlin")
+    #     time.enable_ntp()
+    #     initcpio.mkinitcpio()
+    #     grub.install_grub_efi(disk)
+
+    #     user.add_normal_user("fkoehler")
