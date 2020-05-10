@@ -20,10 +20,11 @@ if __name__ == "__main__":
     fs.create_fs_swap(disk + "2", "arch_swap")
     fs.create_fs_btrfs(disk + "3", "arch_root")
 
-    with mount.mount_single(disk + "3", "/mnt"):
-        fs.create_btrfs_subvolume("/mnt/@")
-        fs.create_btrfs_subvolume("/mnt/@home")
-        fs.create_btrfs_subvolume("/mnt/@snapshots")
+    subvolumes = fs.BtrfsSubvolumes()
+    subvolumes.add("@", "/mnt/")
+    subvolumes.add("@home", "/mnt/home")
+    subvolumes.add("@snapshots", "/mnt/.snapshots")
+    subvolumes.apply(disk + "3")
 
     reflector.run_reflector(False, "Germany")
 

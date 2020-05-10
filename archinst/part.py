@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from archinst.cmd import run
 from archinst.mount import MountEntry, mount_list
@@ -12,7 +12,7 @@ def clear_disk(disk: Union[str, Path], label: str = "gpt"):
 class PartitionLayout:
     def __init__(self, label: str = "gpt"):
         self.label = label
-        self.partitions: List[Dict[str, Union[str, MountEntry]]] = []
+        self.partitions: List[Dict[str, Union[str, Any]]] = []
 
     def append(self,
                type: str,

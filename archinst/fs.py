@@ -1,8 +1,10 @@
 import subprocess
+import tempfile
 from pathlib import Path
-from typing import Optional, Union
+from typing import Any, List, Optional, Tuple, Union
 
 from archinst.cmd import run
+from archinst.mount import MountEntry, mount_list, mount_single
 
 
 def create_fs_ext4(device: Union[str, Path], label: Optional[str] = None):
@@ -50,3 +52,26 @@ def generate_fs_table():
     fstab = subprocess.check_output(["genfstab", "-U", "/mnt"]).decode()
     with open("/mnt/etc/fstab", "a") as fptr:
         fptr.write(fstab)
+
+
+class BtrfsSubvolumes:
+    MountInfo = Union[str, Tuple[Union[str, Path], List[str]]]
+
+    def __init__(self):
+        self.subvolumes: List[Tuple[Union[str, Path],
+                                    Optional[MountInfo]]] = []
+
+    def add(self, path: Union[str, Path], mount: Optional[MountInfo] = None):
+        self.subvolumes.append((path, mount))
+
+    def apply(self, path: Union[str, Path]):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            with mount_single(path, tmpdir):
+                for subvolume in self.subvolumes:
+                    create_btrfs_subvolume(Path(tmpdir) / subvolume[0])
+
+    def mount(self, path: Union[str, Path]):
+        mounts: List[MountEntry] = []
+        for subvolume in self.subvolumes:
+            if subvolume[1] is None:
+                continue
