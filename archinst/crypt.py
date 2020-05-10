@@ -15,4 +15,4 @@ def create_luks_container(device: Union[str, Path], password: str):
                                stderr=sys.stderr,
                                stdout=sys.stdout,
                                stdin=subprocess.PIPE)
-    process.communicate(input=password)
+    process.communicate(input=password.encode())
