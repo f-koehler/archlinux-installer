@@ -47,9 +47,9 @@ def swapoff(device: Union[str, Path]):
 
 
 @contextmanager
-def Mount(device: Union[str, Path],
-          mountpoint: Union[str, Path],
-          options: Optional[List[str]] = None):
+def mount_single(device: Union[str, Path],
+                 mountpoint: Union[str, Path],
+                 options: Optional[List[str]] = None):
     try:
         if mountpoint == "[SWAP]":
             yield swapon(device)
@@ -63,9 +63,9 @@ def Mount(device: Union[str, Path],
 
 
 @contextmanager
-def MountList(entries: List[Union[Tuple[Union[str, Path], Union[str, Path]],
-                                  Tuple[Union[str, Path], Union[str, Path],
-                                        List[str]]]]):
+def mount_list(entries: List[Union[Tuple[Union[str, Path], Union[str, Path]],
+                                   Tuple[Union[str, Path], Union[str, Path],
+                                         List[str]]]]):
     try:
         for entry in entries:
             if entry[1] == "[SWAP]":
