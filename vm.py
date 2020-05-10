@@ -45,7 +45,3 @@ if __name__ == "__main__":
         grub.install_grub_efi(disk)
 
         user.add_normal_user("fkoehler")
-        git.clone("https://github.com/f-koehler/playbooks.git",
-                  "/home/fkoehler/code/playbooks")
-        git.clone("https://github.com/f-koehler/dotfiles.git",
-                  "/home/fkoehler/code/dotfiles")
