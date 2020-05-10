@@ -10,19 +10,11 @@ if __name__ == "__main__":
     args = parser.parse_args()
     disk = args.drive
 
-    part.clear_disk(disk, "gpt")
-    cmd.run([
-        "parted", "-s", "-a", "optimal", disk, "mkpart", "primary", "fat32",
-        "0%", "200MiB"
-    ])
-    cmd.run([
-        "parted", "-s", "-a", "optimal", disk, "mkpart", "primary",
-        "linux-swap", "200MiB", "2000MiB"
-    ])
-    cmd.run([
-        "parted", "-s", "-a", "optimal", disk, "mkpart", "primary", "btrfs",
-        "2000MiB", "100%"
-    ])
+    layout = part.PartitionLayout()
+    layout.append("fat32", "200MiB")
+    layout.append("linux-swap", "200MiB")
+    layout.append("btrfs", "100%")
+    layout.apply(disk)
 
     fs.create_fs_vfat32(disk + "1", "efi")
     fs.create_fs_swap(disk + "2", "arch_swap")
