@@ -45,9 +45,10 @@ class PartitionLayout:
             if partition["mount"] is None:
                 continue
             if isinstance(partition["mount"], str):
-                mounts.append((str(device) + str(number), partition["mount"]))
+                mounts.append(
+                    (str(device) + str(number + 1), partition["mount"]))
                 continue
-            mounts.append((str(device) + str(number), partition["mount"][0],
-                           partition["mount"][1]))
+            mounts.append((str(device) + str(number + 1),
+                           partition["mount"][0], partition["mount"][1]))
 
         return mount_list(mounts)
