@@ -1,7 +1,7 @@
 from contextlib import contextmanager
 from logging import getLogger
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import List, Optional, Tuple, Union
 
 from archinst.cmd import run
 
@@ -45,14 +45,34 @@ def Mount(device: Union[str, Path],
           mountpoint: Union[str, Path],
           options: Optional[List[str]] = None):
     try:
-        yield mount(device, mountpoint, options)
+        if mountpoint == "[SWAP]":
+            yield swapon(device)
+        else:
+            yield mount(device, mountpoint, options)
     finally:
-        unmount(mountpoint)
+        if mountpoint == "[SWAP]":
+            swapoff(device)
+        else:
+            unmount(mountpoint)
 
 
 @contextmanager
-def Swap(device: Union[str, Path]):
+def MountList(entries: List[Union[Tuple[Union[str, Path], Union[str, Path]],
+                                  Tuple[Union[str, Path], Union[str, Path],
+                                        List[str]]]]):
     try:
-        yield swapon(device)
+        for entry in entries:
+            if entry[1] == "[SWAP]":
+                swapon(*entry)
+            else:
+                mount(*entry)
+        yield
     finally:
-        swapoff(device)
+        for entry in entries:
+            try:
+                if entry[1] == "[SWAP]":
+                    swapoff(*entry)
+                else:
+                    unmount(entry[1])
+            except:
+                pass

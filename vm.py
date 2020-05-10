@@ -27,13 +27,12 @@ if __name__ == "__main__":
 
     reflector.run_reflector(False, "Germany")
 
-    with mount.Swap(disk + "2"), mount.Mount(
-            disk + "3", "/mnt",
-        ["subvol=@"]), mount.Mount(disk + "3", "/mnt/home",
-                                   ["subvol=@home"]), mount.Mount(
-                                       disk + "3", "/mnt/.snapshots",
-                                       ["subvol=@snapshots"]), mount.Mount(
-                                           disk + "1", "/mnt/boot/efi"):
+    with mount.MountList([(disk + "2", "[SWAP]"),
+                          (disk + "3", "/mnt", ["subvol=@"]),
+                          (disk + "3", "/mnt/home", ["subvol=@home"]),
+                          (disk + "3",
+                           "/mnt/.snapshots", ["subvol=@snapshots"]),
+                          (disk + "1", "/mnt/boot/efi")]):
         pkg.pacstrap([
             "base", "base-devel", "linux", "linux-firmware", "btrfs-progs",
             "grub-btrfs"
