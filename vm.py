@@ -27,8 +27,8 @@ if __name__ == "__main__":
         subvolumes.add("@", "/mnt/")
         subvolumes.add("@home", "/mnt/home")
         subvolumes.add("@snapshots", "/mnt/.snapshots")
-        subvolumes.add("@/var/log", "/mnt/var/log")
-        subvolumes.add("/var/cache/pacman/pkg")
+        # subvolumes.add("@/var/log", "/mnt/var/log")
+        # subvolumes.add("/var/cache/pacman/pkg")
         subvolumes.apply("/dev/mapper/crypt_root")
 
         reflector.run_reflector(False, "Germany")
