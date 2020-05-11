@@ -1,7 +1,10 @@
 import subprocess
 import sys
+from contextlib import contextmanager
 from pathlib import Path
 from typing import Union
+
+from archinst.cmd import run
 
 
 def create_luks_container(device: Union[str, Path], password: str):
@@ -29,3 +32,16 @@ def open_luks_container(device: Union[str, Path], mapper_name: str,
                                stdout=sys.stdout,
                                stdin=subprocess.PIPE)
     process.communicate(input=password.encode())
+
+
+def close_crypt(mapper_name: str):
+    run(["cryptsetup", "close", mapper_name])
+
+
+@contextmanager
+def luks_container(device: Union[str, Path], mapper_name: str, password: str):
+    try:
+        open_luks_container(device, mapper_name, password)
+        yield
+    finally:
+        close_crypt(mapper_name)

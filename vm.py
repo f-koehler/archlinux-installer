@@ -21,6 +21,8 @@ if __name__ == "__main__":
     fs.create_fs_btrfs(disk + "3", "arch_root")
 
     crypt.create_luks_container(disk + "3", "test")
+    with crypt.luks_container(disk + "3", "crypt_root", "test"):
+        pass
 
     # subvolumes = fs.BtrfsSubvolumes()
     # subvolumes.add("@", "/mnt/")
