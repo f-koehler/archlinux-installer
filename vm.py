@@ -18,30 +18,31 @@ if __name__ == "__main__":
 
     fs.create_fs_vfat32(disk + "1", "efi")
     fs.create_fs_swap(disk + "2", "arch_swap")
-    fs.create_fs_btrfs(disk + "3", "arch_root")
 
     crypt.create_luks_container(disk + "3", "test")
     with crypt.luks_container(disk + "3", "crypt_root", "test"):
-        pass
+        fs.create_fs_btrfs("/dev/mapper/crypt_root", "arch_root")
 
-    # subvolumes = fs.BtrfsSubvolumes()
-    # subvolumes.add("@", "/mnt/")
-    # subvolumes.add("@home", "/mnt/home")
-    # subvolumes.add("@snapshots", "/mnt/.snapshots")
-    # subvolumes.apply(disk + "3")
+        subvolumes = fs.BtrfsSubvolumes()
+        subvolumes.add("@", "/mnt/")
+        subvolumes.add("@home", "/mnt/home")
+        subvolumes.add("@snapshots", "/mnt/.snapshots")
+        subvolumes.add("@/var/log", "/mnt/var/log")
+        subvolumes.add("/var/cache/pacman/pkg")
+        subvolumes.apply("/dev/mapper/crypt_root")
 
-    # reflector.run_reflector(False, "Germany")
+        reflector.run_reflector(False, "Germany")
 
-    # with subvolumes.mount(disk + "3"), layout.mount(disk):
-    #     pkg.pacstrap([
-    #         "base", "base-devel", "linux", "linux-firmware", "btrfs-progs",
-    #         "grub-btrfs"
-    #     ])
-    #     reflector.run_reflector(True, "Germany")
-    #     fs.generate_fs_table()
-    #     time.set_timezone("Europe/Berlin")
-    #     time.enable_ntp()
-    #     initcpio.mkinitcpio()
-    #     grub.install_grub_efi(disk)
+        with subvolumes.mount("/dev/mapper/crypt_root"), layout.mount(disk):
+            pkg.pacstrap([
+                "base", "base-devel", "linux", "linux-firmware", "btrfs-progs",
+                "grub-btrfs"
+            ])
+            reflector.run_reflector(True, "Germany")
+            fs.generate_fs_table()
+            time.set_timezone("Europe/Berlin")
+            time.enable_ntp()
+            initcpio.mkinitcpio()
+            grub.install_grub_efi(disk)
 
-    #     user.add_normal_user("fkoehler")
+            user.add_normal_user("fkoehler")
