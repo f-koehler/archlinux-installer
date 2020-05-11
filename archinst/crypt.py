@@ -16,3 +16,16 @@ def create_luks_container(device: Union[str, Path], password: str):
                                stdout=sys.stdout,
                                stdin=subprocess.PIPE)
     process.communicate(input=password.encode())
+
+
+def open_luks_container(device: Union[str, Path], mapper_name: str,
+                        password: str):
+    command = [
+        "cryptsetup", "-v", "open",
+        str(device), mapper_name, "--type", "luks", "--key-file", "-"
+    ]
+    process = subprocess.Popen(command,
+                               stderr=sys.stderr,
+                               stdout=sys.stdout,
+                               stdin=subprocess.PIPE)
+    process.communicate(input=password.encode())
