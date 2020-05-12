@@ -47,6 +47,19 @@ def open_luks_container(device: Union[str, Path], mapper_name: str,
     process.communicate(input=password.encode())
 
 
+def open_plain_container(device: Union[str, Path], mapper_name: str,
+                         password: str):
+    command = [
+        "cryptsetup", "-v", "open",
+        str(device), mapper_name, "--type", "plain", "--key-file", "-"
+    ]
+    process = subprocess.Popen(command,
+                               stderr=sys.stderr,
+                               stdout=sys.stdout,
+                               stdin=subprocess.PIPE)
+    process.communicate(input=password.encode())
+
+
 def close_crypt(mapper_name: str):
     run(["cryptsetup", "close", mapper_name])
 
@@ -55,6 +68,15 @@ def close_crypt(mapper_name: str):
 def luks_container(device: Union[str, Path], mapper_name: str, password: str):
     try:
         open_luks_container(device, mapper_name, password)
+        yield
+    finally:
+        close_crypt(mapper_name)
+
+
+@contextmanager
+def plain_container(device: Union[str, Path], mapper_name: str, password: str):
+    try:
+        open_plain_container(device, mapper_name, password)
         yield
     finally:
         close_crypt(mapper_name)
