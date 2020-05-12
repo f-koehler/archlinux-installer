@@ -12,16 +12,19 @@ if __name__ == "__main__":
 
     layout = part.PartitionLayout()
     layout.append("fat32", "200MiB", "/mnt/boot/efi")
-    layout.append("linux-swap", "2000MiB", "[SWAP]")
+    layout.append("linux-swap", "2000MiB")
     layout.append("btrfs", "100%")
     layout.apply(disk)
 
     fs.create_fs_vfat32(disk + "1", "efi")
-    fs.create_fs_swap(disk + "2", "arch_swap")
 
     crypt.create_luks_container(disk + "3", "test")
-    with crypt.luks_container(disk + "3", "crypt_root", "test"):
+    crypt.create_plain_container(disk + "2", "test")
+    with crypt.luks_container(disk + "3", "crypt_root",
+                              "test"), crypt.plain_container(
+                                  disk + "2", "crypt_swap", "test"):
         fs.create_fs_btrfs("/dev/mapper/crypt_root", "arch_root")
+        fs.create_fs_swap("/dev/mapper/crypt_swap", "arch_swap")
 
         subvolumes = fs.BtrfsSubvolumes()
         subvolumes.add("@", "/mnt/")
@@ -42,7 +45,15 @@ if __name__ == "__main__":
             fs.generate_fs_table()
             time.set_timezone("Europe/Berlin")
             time.enable_ntp()
+
+            hooks = initcpio.read_hooks()
+            initcpio.insert_hook_after(hooks, "udev", "base")
+            initcpio.insert_hook_after(hooks, "keyboard", "autodetect")
+            initcpio.insert_hook_after(hooks, "keymap", "keyboard")
+            initcpio.insert_hook_after(hooks, "encrypt", "block")
+            initcpio.set_hooks(hooks)
             initcpio.mkinitcpio()
+
             grub.install_grub_efi(disk)
 
             user.add_normal_user("fkoehler")
