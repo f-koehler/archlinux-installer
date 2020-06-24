@@ -10,7 +10,7 @@ python = "^3.8"
 [tool.poetry.dev-dependencies]
 yapf = "^0.30.0"
 pylint = "^2.5.0"
-mypy = "^0.780"
+mypy = "^0.782"
 isort = "^4.3.21"
 
 [build-system]
