@@ -7,8 +7,9 @@ from archinst.cmd import run
 
 LOGGER = getLogger(__name__)
 
-MountEntry = Union[Tuple[Union[str, Path], Union[str, Path]],
-                   Tuple[Union[str, Path], Union[str, Path], List[str]]]
+MountEntryWithOptions = Tuple[Union[str, Path], Union[str, Path], List[str]]
+MountEntryWithoutOptions = Tuple[Union[str, Path], Union[str, Path]]
+MountEntry = Union[MountEntryWithOptions, MountEntryWithoutOptions]
 
 
 def sync():

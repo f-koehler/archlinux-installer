@@ -1,54 +1,49 @@
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union
 
 from archinst.cmd import run
-from archinst.mount import MountEntry, mount_list
 
 
 def clear_disk(disk: Union[str, Path], label: str = "gpt"):
     run(["parted", "-s", str(disk), "mklabel", label])
 
 
-class PartitionLayout:
-    def __init__(self, label: str = "gpt"):
-        self.label = label
-        self.partitions: List[Dict[str, Union[str, Any]]] = []
+class Partition:
+    def __init__(self, base_device: Union[str, Path], number: int, start: str,
+                 end: str, type_: str):
+        self.base_device = str(base_device)
+        self.device = self.base_device + str(number)
+        self.number = number
+        self.start = start
+        self.end = end
+        self.type_ = type_
 
-    def append(self,
-               type: str,
-               end: str,
-               mount: Optional[Union[str, Tuple[Union[str, Path],
-                                                List[str]]]] = None):
+
+class PartitionLayout:
+    def __init__(self, device: Union[str, Path], label: str = "gpt"):
+        self.device = str(device)
+        self.label = label
+        self.partitions: List[Partition] = []
+
+    @staticmethod
+    def create_empty_gpt(device: Union[str, Path]):
+        clear_disk(device)
+        return PartitionLayout(device, "gpt")
+
+    def append(self, type_: str, end: str = "100%"):
         if self.partitions:
-            start = self.partitions[-1]["end"]
+            start = self.partitions[-1].end
         else:
             start = "0%"
-        self.partitions.append({
-            "start": start,
-            "end": end,
-            "type": type,
-            "mount": mount
-        })
 
-    def apply(self, device: Union[str, Path]):
-        clear_disk(device, self.label)
-        for partition in self.partitions:
-            run([
-                "parted", "-s", "-a", "optimal",
-                str(device), "mkpart", "primary", partition["type"],
-                partition["start"], partition["end"]
-            ])
+        partition = Partition(self.device, len(self.partitions), start, end,
+                              type_)
 
-    def mount(self, device: Union[str, Path]):
-        mounts: List[MountEntry] = []
-        for (number, partition) in enumerate(self.partitions):
-            if partition["mount"] is None:
-                continue
-            if isinstance(partition["mount"], str):
-                mounts.append(
-                    (str(device) + str(number + 1), partition["mount"]))
-                continue
-            mounts.append((str(device) + str(number + 1),
-                           partition["mount"][0], partition["mount"][1]))
+        run([
+            "parted", "-s", "-a", "optimal",
+            str(self.device), "mkpart", "primary", partition.type_,
+            partition.start, partition.end
+        ])
 
-        return mount_list(mounts)
+        self.partitions.append(partition)
+        return partition
