@@ -52,7 +52,7 @@ def close_crypt(mapper_name: str):
 
 
 @contextmanager
-def luks_container(device: Union[str, Path], mapper_name: str, password: str):
+def luks_open(device: Union[str, Path], mapper_name: str, password: str):
     try:
         open_luks_container(device, mapper_name, password)
         yield
