@@ -36,8 +36,8 @@ class PartitionLayout:
         else:
             start = "0%"
 
-        partition = Partition(self.device, len(self.partitions), start, end,
-                              type_)
+        partition = Partition(self.device,
+                              len(self.partitions) + 1, start, end, type_)
 
         run([
             "parted", "-s", "-a", "optimal",
