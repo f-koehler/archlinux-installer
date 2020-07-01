@@ -30,7 +30,7 @@ if __name__ == "__main__":
 
     reflector.run_reflector(False, "Germany")
 
-    with subvolumes.mount(disk + "3"), layout.mount(disk):
+    with layout.mount(disk), subvolumes.mount(disk + "3"):
         pkg.pacstrap([
             "base", "base-devel", "linux", "linux-firmware", "btrfs-progs",
             "grub-btrfs"
