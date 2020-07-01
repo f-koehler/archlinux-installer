@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import argparse
 
-from archinst import (cmd, crypt, fs, git, grub, initcpio, mount, part, pkg,
+from archinst import (cmd, fs, git, grub, initcpio, mount, part, pkg,
                       reflector, time, user)
 
 if __name__ == "__main__":
@@ -13,7 +13,7 @@ if __name__ == "__main__":
     layout = part.PartitionLayout()
     layout.append("fat32", "200MiB", "/mnt/boot/efi")
     layout.append("linux-swap", "2000MiB", "[SWAP]")
-    layout.append("btrfs", "100%", "/mnt")
+    layout.append("btrfs", "100%")
     layout.apply(disk)
 
     fs.create_fs_vfat32(disk + "1", "efi")
@@ -24,13 +24,11 @@ if __name__ == "__main__":
     subvolumes.add("@", "/mnt/")
     subvolumes.add("@home", "/mnt/home")
     subvolumes.add("@snapshots", "/mnt/.snapshots")
-    subvolumes.add("@/var/log", "/mnt/var/log")
-    subvolumes.add("/var/cache/pacman/pkg")
     subvolumes.apply(disk + "3")
 
     reflector.run_reflector(False, "Germany")
 
-    with layout.mount(disk), subvolumes.mount(disk + "3"):
+    with subvolumes.mount(disk + "3"), layout.mount(disk):
         pkg.pacstrap([
             "base", "base-devel", "linux", "linux-firmware", "btrfs-progs",
             "grub-btrfs"
@@ -39,7 +37,7 @@ if __name__ == "__main__":
         fs.generate_fs_table()
         time.set_timezone("Europe/Berlin")
         time.enable_ntp()
-
+        initcpio.mkinitcpio()
         grub.install_grub_efi(disk)
 
         user.add_normal_user("fkoehler")
