@@ -21,7 +21,7 @@ if __name__ == "__main__":
     crypt.create_luks_container(disk + "3", "test")
     with crypt.luks_open(disk + "3", "crypt_root", "test"):
         fs.create_fs_btrfs("/dev/mapper/crypt_root", "arch_root")
-        fs.create_fs_swap("/dev/mapper/crypt_swap", "arch_swap")
+        # fs.create_fs_swap("/dev/mapper/crypt_swap", "arch_swap")
 
         subvolumes = fs.BtrfsSubvolumes()
         subvolumes.add("@", "/mnt/")
