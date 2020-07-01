@@ -17,8 +17,8 @@ if __name__ == "__main__":
     layout.apply(disk)
 
     fs.create_fs_vfat32(disk + "1", "efi")
-    fs.create_fs_swap(disk+"2", "arch_swap")
-    fs.create_fs_btrfs(disk+"3", "arch_root")
+    fs.create_fs_swap(disk + "2", "arch_swap")
+    fs.create_fs_btrfs(disk + "3", "arch_root")
 
     subvolumes = fs.BtrfsSubvolumes()
     subvolumes.add("@", "/mnt/")
@@ -26,11 +26,11 @@ if __name__ == "__main__":
     subvolumes.add("@snapshots", "/mnt/.snapshots")
     subvolumes.add("@/var/log", "/mnt/var/log")
     subvolumes.add("/var/cache/pacman/pkg")
-    subvolumes.apply("/dev/mapper/crypt_root")
+    subvolumes.apply(disk + "3")
 
     reflector.run_reflector(False, "Germany")
 
-    with subvolumes.mount("/dev/mapper/crypt_root"), layout.mount(disk):
+    with subvolumes.mount(disk + "3"), layout.mount(disk):
         pkg.pacstrap([
             "base", "base-devel", "linux", "linux-firmware", "btrfs-progs",
             "grub-btrfs"
