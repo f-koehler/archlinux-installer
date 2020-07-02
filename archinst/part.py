@@ -9,8 +9,14 @@ def clear_disk(disk: Union[str, Path], label: str = "gpt"):
 
 
 class Partition:
-    def __init__(self, base_device: Union[str, Path], number: int, start: str,
-                 end: str, type_: str):
+    def __init__(
+        self,
+        base_device: Union[str, Path],
+        number: int,
+        start: str,
+        end: str,
+        type_: str,
+    ):
         self.base_device = str(base_device)
         self.device = self.base_device + str(number)
         self.number = number
@@ -36,14 +42,22 @@ class PartitionLayout:
         else:
             start = "0%"
 
-        partition = Partition(self.device,
-                              len(self.partitions) + 1, start, end, type_)
+        partition = Partition(self.device, len(self.partitions) + 1, start, end, type_)
 
-        run([
-            "parted", "-s", "-a", "optimal",
-            str(self.device), "mkpart", "primary", partition.type_,
-            partition.start, partition.end
-        ])
+        run(
+            [
+                "parted",
+                "-s",
+                "-a",
+                "optimal",
+                str(self.device),
+                "mkpart",
+                "primary",
+                partition.type_,
+                partition.start,
+                partition.end,
+            ]
+        )
 
         self.partitions.append(partition)
         return partition

@@ -1,10 +1,22 @@
 #!/usr/bin/env python
 import argparse
 
-from archinst import (cmd, git, grub, initcpio, mount, part, pkg, reflector,
-                      time, user)
+from archinst import cmd, git, grub, initcpio, mount, part, pkg, reflector, time, user
 from archinst.fs import FileSystem
 from archinst.part import PartitionLayout
+from archinst import (
+    cmd,
+    fs,
+    git,
+    grub,
+    initcpio,
+    mount,
+    part,
+    pkg,
+    reflector,
+    time,
+    user,
+)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -19,7 +31,7 @@ if __name__ == "__main__":
     filesystems = [
         FileSystem.create_btrfs(part_root, "arch_root", "/mnt/"),
         FileSystem.create_vfat32(part_efi, "efi", "/mnt/boot/efi"),
-        FileSystem.create_swap(part_swap, "arch_swap")
+        FileSystem.create_swap(part_swap, "arch_swap"),
     ]
 
     # subvolumes = fs.BtrfsSubvolumes()
