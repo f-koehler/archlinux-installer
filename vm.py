@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 import argparse
 
-from archinst import cmd, git, grub, initcpio, mount, part, pkg, reflector, time, user
-from archinst.fs import FileSystem
-from archinst.part import PartitionLayout
 from archinst import (
     cmd,
     fs,
@@ -17,6 +14,8 @@ from archinst import (
     time,
     user,
 )
+from archinst.fs import FileSystem
+from archinst.part import PartitionLayout
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

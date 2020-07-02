@@ -9,12 +9,14 @@ from archinst.part import Partition
 
 
 class FileSystem:
-    def __init__(self,
-                 partition: Partition,
-                 label: Optional[str] = None,
-                 mount_point: Optional[Union[str, Path]] = None,
-                 mount_options: Optional[List[str]] = None,
-                 mount_type: Optional[str] = None):
+    def __init__(
+        self,
+        partition: Partition,
+        label: Optional[str] = None,
+        mount_point: Optional[Union[str, Path]] = None,
+        mount_options: Optional[List[str]] = None,
+        mount_type: Optional[str] = None,
+    ):
         self.partition = partition
         self.label = label
         self.mount_point = mount_point
@@ -22,44 +24,54 @@ class FileSystem:
         self.mount_type = mount_type
 
     @staticmethod
-    def create_ext4(partition: Partition,
-                    label: Optional[str] = None,
-                    mount_point: Optional[Union[str, Path]] = None,
-                    mount_options: Optional[List[str]] = None):
+    def create_ext4(
+        partition: Partition,
+        label: Optional[str] = None,
+        mount_point: Optional[Union[str, Path]] = None,
+        mount_options: Optional[List[str]] = None,
+    ):
         cmd = ["mkfs.ext4", "-F"]
         if label:
             cmd += ["-L", label]
         cmd.append(partition.device)
         run(cmd)
 
-        return FileSystem(partition,
-                          label=label,
-                          mount_point=mount_point,
-                          mount_type="ext4",
-                          mount_options=mount_options)
+        return FileSystem(
+            partition,
+            label=label,
+            mount_point=mount_point,
+            mount_type="ext4",
+            mount_options=mount_options,
+        )
 
     @staticmethod
-    def create_btrfs(partition: Partition,
-                     label: Optional[str] = None,
-                     mount_point: Optional[Union[str, Path]] = None,
-                     mount_options: Optional[List[str]] = None):
+    def create_btrfs(
+        partition: Partition,
+        label: Optional[str] = None,
+        mount_point: Optional[Union[str, Path]] = None,
+        mount_options: Optional[List[str]] = None,
+    ):
         cmd = ["mkfs.btrfs", "-f"]
         if label:
             cmd += ["-L", label]
         cmd.append(partition.device)
         run(cmd)
 
-        return FileSystem(partition,
-                          label=label,
-                          mount_point=mount_point,
-                          mount_type="btrfs",
-                          mount_options=mount_options)
+        return FileSystem(
+            partition,
+            label=label,
+            mount_point=mount_point,
+            mount_type="btrfs",
+            mount_options=mount_options,
+        )
 
     @staticmethod
-    def create_vfat32(partition: Partition,
-                      label: Optional[str] = None,
-                      mount_point: Optional[Union[str, Path]] = None,
-                      mount_options: Optional[List[str]] = None):
+    def create_vfat32(
+        partition: Partition,
+        label: Optional[str] = None,
+        mount_point: Optional[Union[str, Path]] = None,
+        mount_options: Optional[List[str]] = None,
+    ):
         cmd = ["mkfs.vfat", "-F", "32"]
         if label:
             cmd.append("-n")
@@ -67,27 +79,33 @@ class FileSystem:
         cmd.append(partition.device)
         run(cmd)
 
-        return FileSystem(partition,
-                          label=label,
-                          mount_point=mount_point,
-                          mount_type="btrfs",
-                          mount_options=mount_options)
+        return FileSystem(
+            partition,
+            label=label,
+            mount_point=mount_point,
+            mount_type="btrfs",
+            mount_options=mount_options,
+        )
 
     @staticmethod
-    def create_swap(partition: Partition,
-                    label: Optional[str] = None,
-                    mount_options: Optional[List[str]] = None):
+    def create_swap(
+        partition: Partition,
+        label: Optional[str] = None,
+        mount_options: Optional[List[str]] = None,
+    ):
         cmd = ["mkswap", "-f"]
         if label:
             cmd += ["-L", label]
         cmd.append(partition.device)
         run(cmd)
 
-        return FileSystem(partition,
-                          label=label,
-                          mount_point="[SWAP]",
-                          mount_type="swap",
-                          mount_options=mount_options)
+        return FileSystem(
+            partition,
+            label=label,
+            mount_point="[SWAP]",
+            mount_type="swap",
+            mount_options=mount_options,
+        )
 
 
 def create_btrfs_subvolume(path: Union[str, Path]):
