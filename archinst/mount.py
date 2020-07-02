@@ -1,90 +1,86 @@
+import subprocess
 from contextlib import contextmanager
 from logging import getLogger
 from pathlib import Path
-from typing import List, Optional, Tuple, Union
+from typing import List, Union
 
 from archinst.cmd import run
+from archinst.fs import FileSystem
 
 LOGGER = getLogger(__name__)
 
-MountEntryWithOptions = Tuple[Union[str, Path], Union[str, Path], List[str]]
-MountEntryWithoutOptions = Tuple[Union[str, Path], Union[str, Path]]
-MountEntry = Union[MountEntryWithOptions, MountEntryWithoutOptions]
+
+def mount_filesystem(filesystem: FileSystem):
+    if filesystem.mount_point is None:
+        return
+
+    cmd: List[str] = []
+
+    if filesystem.type_ == "swap":
+        cmd = ["swapon"]
+        if filesystem.mount_options:
+            cmd += ["-o", ",".join(filesystem.mount_options)]
+        cmd += filesystem.partition.device
+    else:
+        cmd = ["mount", "-t", filesystem.type_]
+        if filesystem.mount_options:
+            cmd += ["-o", ",".join(filesystem.mount_options)]
+        cmd += [filesystem.partition.device, filesystem.mount_point]
+
+    run(cmd)
 
 
-def sync():
-    run(["sync"])
+def is_mounted(filesystem: FileSystem) -> bool:
+    if filesystem.mount_point is None:
+        return False
+
+    if filesystem.type_ == "swap":
+        with open("/proc/swaps", "r") as fptr:
+            for line in fptr.readlines()[1:]:
+                device = line.split()[0].strip()
+                if Path(device) == Path(filesystem.partition.device):
+                    return True
+        return False
+
+    with open("/proc/mounts", "r") as fptr:
+        for line in fptr.readlines():
+            device = line.split()[0].strip()
+            if Path(device) == Path(filesystem.partition.device):
+                return True
+
+    return False
 
 
-def mount(
-    device: Union[str, Path],
-    mountpoint: Union[str, Path],
-    options: Optional[List[str]] = None,
-):
-    LOGGER.info("mount: %s", str(device))
-    device = str(device)
-    mountpoint = str(mountpoint)
+def unmount_filesystem(filesystem: FileSystem):
+    if is_mounted(filesystem):
+        return
 
-    Path(mountpoint).mkdir(parents=True, exist_ok=True)
+    cmd: List[str] = []
 
-    command = ["mount"]
-    if options:
-        command.append("-o")
-        command += options
-    command += [device, mountpoint]
-    run(command)
+    if filesystem.type_ == "swap":
+        cmd = ["swapoff", filesystem.partition.device]
+    else:
+        cmd = ["umount", filesystem.partition.device]
 
-
-def unmount(path: Union[str, Path]):
-    LOGGER.info("unmount: %s", str(path))
-    sync()
-    run(["umount", str(path)])
-
-
-def swapon(device: Union[str, Path]):
-    LOGGER.info("swapon: %s", str(device))
-    run(["swapon", str(device)])
-
-
-def swapoff(device: Union[str, Path]):
-    LOGGER.info("swapoff: %s", str(device))
-    sync()
-    run(["swapoff", str(device)])
-
-
-@contextmanager
-def mount_single(
-    device: Union[str, Path],
-    mountpoint: Union[str, Path],
-    options: Optional[List[str]] = None,
-):
-    try:
-        if mountpoint == "[SWAP]":
-            yield swapon(device)
-        else:
-            yield mount(device, mountpoint, options)
-    finally:
-        if mountpoint == "[SWAP]":
-            swapoff(device)
-        else:
-            unmount(mountpoint)
+    run(cmd)
 
 
 @contextmanager
-def mount_list(entries: List[MountEntry]):
+def mount(filesystem: Union[FileSystem, List[FileSystem]]):
+    if isinstance(filesystem, FileSystem):
+        filesystems = [
+            filesystem,
+        ]
+    else:
+        filesystems = filesystem
+
     try:
-        for entry in entries:
-            if entry[1] == "[SWAP]":
-                swapon(entry[0])
-            else:
-                mount(*entry)
+        for fs in filesystems:
+            mount_filesystem(fs)
         yield
     finally:
-        for entry in entries[::-1]:
+        for fs in filesystems:
             try:
-                if entry[1] == "[SWAP]":
-                    swapoff(entry[0])
-                else:
-                    unmount(entry[1])
-            except:
+                unmount_filesystem(fs)
+            except subprocess.CalledProcessError:
                 pass

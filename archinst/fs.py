@@ -12,16 +12,17 @@ class FileSystem:
     def __init__(
         self,
         partition: Partition,
+        type_: str,
         label: Optional[str] = None,
         mount_point: Optional[Union[str, Path]] = None,
         mount_options: Optional[List[str]] = None,
         mount_type: Optional[str] = None,
     ):
         self.partition = partition
+        self.type_ = type_
         self.label = label
-        self.mount_point = mount_point
+        self.mount_point = str(mount_point)
         self.mount_options = mount_options
-        self.mount_type = mount_type
 
     @staticmethod
     def create_ext4(
@@ -38,9 +39,9 @@ class FileSystem:
 
         return FileSystem(
             partition,
+            "ext4",
             label=label,
             mount_point=mount_point,
-            mount_type="ext4",
             mount_options=mount_options,
         )
 
@@ -59,9 +60,9 @@ class FileSystem:
 
         return FileSystem(
             partition,
+            "btrfs",
             label=label,
             mount_point=mount_point,
-            mount_type="btrfs",
             mount_options=mount_options,
         )
 
@@ -81,9 +82,9 @@ class FileSystem:
 
         return FileSystem(
             partition,
+            "vfat",
             label=label,
             mount_point=mount_point,
-            mount_type="btrfs",
             mount_options=mount_options,
         )
 
@@ -101,9 +102,9 @@ class FileSystem:
 
         return FileSystem(
             partition,
+            "swap",
             label=label,
             mount_point="[SWAP]",
-            mount_type="swap",
             mount_options=mount_options,
         )
 

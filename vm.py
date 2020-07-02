@@ -1,20 +1,8 @@
 #!/usr/bin/env python
 import argparse
 
-from archinst import (
-    cmd,
-    fs,
-    git,
-    grub,
-    initcpio,
-    mount,
-    part,
-    pkg,
-    reflector,
-    time,
-    user,
-)
 from archinst.fs import FileSystem
+from archinst.mount import mount
 from archinst.part import PartitionLayout
 
 if __name__ == "__main__":
@@ -32,6 +20,9 @@ if __name__ == "__main__":
         FileSystem.create_vfat32(part_efi, "efi", "/mnt/boot/efi"),
         FileSystem.create_swap(part_swap, "arch_swap"),
     ]
+
+    with mount(filesystems):
+        pass
 
     # subvolumes = fs.BtrfsSubvolumes()
     # subvolumes.add("@", "/mnt/")
