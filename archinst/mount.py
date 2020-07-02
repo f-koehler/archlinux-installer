@@ -20,7 +20,7 @@ def mount_filesystem(filesystem: FileSystem):
         cmd = ["swapon"]
         if filesystem.mount_options:
             cmd += ["-o", ",".join(filesystem.mount_options)]
-        cmd += filesystem.partition.device
+        cmd.append(filesystem.partition.device)
     else:
         Path(filesystem.mount_point).mkdir(parents=True, exist_ok=True)
         cmd = ["mount", "-t", filesystem.type_]
