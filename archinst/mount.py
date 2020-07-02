@@ -7,17 +7,21 @@ from archinst.cmd import run
 
 LOGGER = getLogger(__name__)
 
-MountEntry = Union[Tuple[Union[str, Path], Union[str, Path]],
-                   Tuple[Union[str, Path], Union[str, Path], List[str]]]
+MountEntry = Union[
+    Tuple[Union[str, Path], Union[str, Path]],
+    Tuple[Union[str, Path], Union[str, Path], List[str]],
+]
 
 
 def sync():
     run(["sync"])
 
 
-def mount(device: Union[str, Path],
-          mountpoint: Union[str, Path],
-          options: Optional[List[str]] = None):
+def mount(
+    device: Union[str, Path],
+    mountpoint: Union[str, Path],
+    options: Optional[List[str]] = None,
+):
     LOGGER.info("mount: %s", str(device))
     device = str(device)
     mountpoint = str(mountpoint)
@@ -50,9 +54,11 @@ def swapoff(device: Union[str, Path]):
 
 
 @contextmanager
-def mount_single(device: Union[str, Path],
-                 mountpoint: Union[str, Path],
-                 options: Optional[List[str]] = None):
+def mount_single(
+    device: Union[str, Path],
+    mountpoint: Union[str, Path],
+    options: Optional[List[str]] = None,
+):
     try:
         if mountpoint == "[SWAP]":
             yield swapon(device)

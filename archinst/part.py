@@ -14,30 +14,37 @@ class PartitionLayout:
         self.label = label
         self.partitions: List[Dict[str, Union[str, Any]]] = []
 
-    def append(self,
-               type: str,
-               end: str,
-               mount: Optional[Union[str, Tuple[Union[str, Path],
-                                                List[str]]]] = None):
+    def append(
+        self,
+        type: str,
+        end: str,
+        mount: Optional[Union[str, Tuple[Union[str, Path], List[str]]]] = None,
+    ):
         if self.partitions:
             start = self.partitions[-1]["end"]
         else:
             start = "0%"
-        self.partitions.append({
-            "start": start,
-            "end": end,
-            "type": type,
-            "mount": mount
-        })
+        self.partitions.append(
+            {"start": start, "end": end, "type": type, "mount": mount}
+        )
 
     def apply(self, device: Union[str, Path]):
         clear_disk(device, self.label)
         for partition in self.partitions:
-            run([
-                "parted", "-s", "-a", "optimal",
-                str(device), "mkpart", "primary", partition["type"],
-                partition["start"], partition["end"]
-            ])
+            run(
+                [
+                    "parted",
+                    "-s",
+                    "-a",
+                    "optimal",
+                    str(device),
+                    "mkpart",
+                    "primary",
+                    partition["type"],
+                    partition["start"],
+                    partition["end"],
+                ]
+            )
 
     def mount(self, device: Union[str, Path]):
         mounts: List[MountEntry] = []
@@ -45,10 +52,14 @@ class PartitionLayout:
             if partition["mount"] is None:
                 continue
             if isinstance(partition["mount"], str):
-                mounts.append(
-                    (str(device) + str(number + 1), partition["mount"]))
+                mounts.append((str(device) + str(number + 1), partition["mount"]))
                 continue
-            mounts.append((str(device) + str(number + 1),
-                           partition["mount"][0], partition["mount"][1]))
+            mounts.append(
+                (
+                    str(device) + str(number + 1),
+                    partition["mount"][0],
+                    partition["mount"][1],
+                )
+            )
 
         return mount_list(mounts)

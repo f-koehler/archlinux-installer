@@ -1,8 +1,19 @@
 #!/usr/bin/env python
 import argparse
 
-from archinst import (cmd, fs, git, grub, initcpio, mount, part, pkg,
-                      reflector, time, user)
+from archinst import (
+    cmd,
+    fs,
+    git,
+    grub,
+    initcpio,
+    mount,
+    part,
+    pkg,
+    reflector,
+    time,
+    user,
+)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -29,10 +40,16 @@ if __name__ == "__main__":
     reflector.run_reflector(False, "Germany")
 
     with subvolumes.mount(disk + "3"), layout.mount(disk):
-        pkg.pacstrap([
-            "base", "base-devel", "linux", "linux-firmware", "btrfs-progs",
-            "grub-btrfs"
-        ])
+        pkg.pacstrap(
+            [
+                "base",
+                "base-devel",
+                "linux",
+                "linux-firmware",
+                "btrfs-progs",
+                "grub-btrfs",
+            ]
+        )
         reflector.run_reflector(True, "Germany")
         fs.generate_fs_table()
         time.set_timezone("Europe/Berlin")

@@ -58,8 +58,7 @@ class BtrfsSubvolumes:
     MountInfo = Union[str, Tuple[Union[str, Path], List[str]]]
 
     def __init__(self):
-        self.subvolumes: List[Tuple[Union[str, Path],
-                                    Optional[MountInfo]]] = []
+        self.subvolumes: List[Tuple[Union[str, Path], Optional[MountInfo]]] = []
 
     def add(self, path: Union[str, Path], mount: Optional[MountInfo] = None):
         self.subvolumes.append((path, mount))
@@ -77,8 +76,14 @@ class BtrfsSubvolumes:
                 continue
             if isinstance(subvolume[1], str):
                 mounts.append(
-                    (partition, subvolume[1], ["subvol=" + str(subvolume[0])]))
+                    (partition, subvolume[1], ["subvol=" + str(subvolume[0])])
+                )
                 continue
-            mounts.append((partition, subvolume[1][0],
-                           ["subvol=" + str(subvolume[0])] + subvolume[1][1]))
+            mounts.append(
+                (
+                    partition,
+                    subvolume[1][0],
+                    ["subvol=" + str(subvolume[0])] + subvolume[1][1],
+                )
+            )
         return mount_list(mounts)

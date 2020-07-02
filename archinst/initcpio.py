@@ -33,15 +33,15 @@ def set_hooks(hooks: List[str]):
 
 def insert_hook_after(hooks: List[str], hook: str, after: str):
     if hook == after:
-        raise ValueError("cannot insert hook \"{}\" after itself".format(hook))
+        raise ValueError('cannot insert hook "{}" after itself'.format(hook))
     if after not in hooks:
-        raise ValueError("hook \"{}\" not in hook list".format(after))
+        raise ValueError('hook "{}" not in hook list'.format(after))
     afterpos = hooks.index(after)
     if hook in hooks:
         if hooks.index(hook) < afterpos:
             raise ValueError(
-                "hook \"{}\" already present but before \"{}\"".format(
-                    hook, after))
+                'hook "{}" already present but before "{}"'.format(hook, after)
+            )
         else:
             return
     hooks.insert(hooks.index(after) + 1, hook)
