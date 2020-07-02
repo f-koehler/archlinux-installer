@@ -7,4 +7,4 @@ echo "Run isort"
 isort -j $(nproc) ${FILES} || exit
 
 echo "Run yapf"
-yapf --parallel --in-place --style=pep8 ${FILES} || exit
+black --target-version py38 ${FILES} || exit
