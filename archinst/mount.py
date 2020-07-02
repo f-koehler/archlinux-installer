@@ -77,7 +77,7 @@ def mount(filesystem: Union[FileSystem, List[FileSystem]]):
             mount_filesystem(fs)
         yield
     finally:
-        for fs in filesystems:
+        for fs in reversed(filesystems):
             try:
                 unmount_filesystem(fs)
             except:
