@@ -80,5 +80,5 @@ def mount(filesystem: Union[FileSystem, List[FileSystem]]):
         for fs in filesystems:
             try:
                 unmount_filesystem(fs)
-            except subprocess.CalledProcessError:
+            except:
                 pass
