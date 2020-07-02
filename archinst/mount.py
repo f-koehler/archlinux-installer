@@ -52,7 +52,7 @@ def is_mounted(filesystem: FileSystem) -> bool:
     return False
 
 
-def unmount_filesystem(filesystem: FileSystem, chec):
+def unmount_filesystem(filesystem: FileSystem):
     cmd: List[str] = []
 
     if filesystem.type_ == "swap":
