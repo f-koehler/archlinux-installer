@@ -6,15 +6,16 @@ authors = ["Fabian Köhler <fabian.koehler@protonmail.ch>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-rope = "^0.17.0"
 
 [tool.poetry.dev-dependencies]
-yapf = "0.30.0"
-pylint = "2.5.3"
-mypy = "0.782"
+bandit = "1.6"
+flake8 = "3.8"
 isort = "4.3.21"
 jedi = "0.17.1"
+mypy = "0.782"
+pylint = "2.5.3"
 rope = "0.17.0"
+yapf = "0.30.0"
 
 [build-system]
 requires = ["poetry>=0.12"]
