@@ -1,10 +1,9 @@
 import subprocess
 import tempfile
 from pathlib import Path
-from typing import Any, List, Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union
 
 from archinst.cmd import run
-from archinst.mount import MountEntry, mount, mount_list, mount_single
 from archinst.part import Partition
 
 
@@ -16,7 +15,6 @@ class FileSystem:
         label: Optional[str] = None,
         mount_point: Optional[Union[str, Path]] = None,
         mount_options: Optional[List[str]] = None,
-        mount_type: Optional[str] = None,
     ):
         self.partition = partition
         self.type_ = type_
