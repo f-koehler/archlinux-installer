@@ -16,18 +16,20 @@ if __name__ == "__main__":
     part_swap = layout.append("linux-swap", "2000MiB")
     part_root = layout.append("btrfs", "100%")
 
-    filesystems = [
-        fs.create_btrfs(part_root, "arch_root", "/mnt/"),
-        fs.create_vfat32(part_efi, "efi", "/mnt/boot/efi"),
-        fs.create_swap(part_swap, "arch_swap"),
-    ]
-    fs_root = filesystems[0]
+    fs_root = fs.create_btrfs(part_root, "arch_root", "/mnt/")
+    fs_efi = fs.create_vfat32(part_efi, "efi", "/mnt/boot/efi")
+    fs_swap = (fs.create_swap(part_swap, "arch_swap"),)
 
-    with mount(filesystems):
-        fs_root.create_subvolume("@")
-        fs_root.create_subvolume("@home")
-        fs_root.create_subvolume("@snapshots")
-        fs_root.create_subvolume("@/var/log")
+    with mount([fs_root, fs_efi, fs_swap]):
+        subvolumes = [
+            fs_root.create_subvolume("@"),
+            fs_root.create_subvolume("@home"),
+            fs_root.create_subvolume("@snapshots"),
+            fs_root.create_subvolume("@/var/log"),
+        ]
+        with mount(subvolumes):
+            pass
+
         # subvolumes = [
         #     BtrfsSubvolume("@", "/mnt"),
         #     BtrfsSubvolume("@home", "/mnt/home"),

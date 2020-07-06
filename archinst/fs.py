@@ -47,6 +47,16 @@ class BtrfsFileSystem(FileSystem):
         cmd = ["btrfs", "subvolume", "create", name]
         run(cmd, cwd=self.mount_point)
 
+        mount_options = [] if self.mount_options is None else self.mount_options
+        mount_options.append("subvol=" + name)
+
+        return FileSystem(
+            self.partition,
+            self.type_,
+            mount_point=Path(self.mount_point) / name,
+            mount_options=mount_options,
+        )
+
 
 def create_ext4(
     partition: Partition,
