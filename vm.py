@@ -23,10 +23,10 @@ if __name__ == "__main__":
 
     with mount(filesystems):
         subvolumes = [
-            BtrfsSubvolume("@", "/"),
-            BtrfsSubvolume("@home", "/home"),
-            BtrfsSubvolume("@snapshots", "/.snapshots"),
-            BtrfsSubvolume("@/var/log", "/var/log"),
+            BtrfsSubvolume("/mnt/@", "/mnt"),
+            BtrfsSubvolume("/mnt/@home", "/mnt/home"),
+            BtrfsSubvolume("/mnt/@snapshots", "/mnt/.snapshots"),
+            BtrfsSubvolume("/mnt/@/var/log", "/mnt/var/log"),
         ]
 
     # subvolumes = fs.BtrfsSubvolumes()
