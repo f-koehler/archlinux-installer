@@ -28,7 +28,7 @@ if __name__ == "__main__":
             fs_root.create_subvolume("@/var/log"),
         ]
         with mount(subvolumes):
-            pass
+            fs.generate_fstab()
 
         # subvolumes = [
         #     BtrfsSubvolume("@", "/mnt"),
