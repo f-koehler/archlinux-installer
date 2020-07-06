@@ -1,10 +1,12 @@
-from typing import List, Union
+from typing import List, Union, Optional
 
 from archinst.cmd import run
 
 
-def pacstrap(packages: Union[str, List[str]]):
+def pacstrap(
+    packages: Union[str, List[str]], prefix: Optional[Union[str, List]] = "/mnt"
+):
     if isinstance(packages, str):
-        run(["pacstrap", "/mnt", packages])
+        run(["pacstrap", str(prefix), packages])
     else:
-        run(["pacstrap", "/mnt"] + packages)
+        run(["pacstrap", str(prefix)] + packages)
