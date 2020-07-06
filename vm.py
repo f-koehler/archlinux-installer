@@ -21,9 +21,10 @@ if __name__ == "__main__":
         fs.create_vfat32(part_efi, "efi", "/mnt/boot/efi"),
         fs.create_swap(part_swap, "arch_swap"),
     ]
+    fs_root = filesystems[0]
 
     with mount(filesystems):
-        pass
+        fs_root.create_subvolume("@")
         # subvolumes = [
         #     BtrfsSubvolume("@", "/mnt"),
         #     BtrfsSubvolume("@home", "/mnt/home"),

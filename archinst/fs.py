@@ -2,9 +2,12 @@ import subprocess
 import tempfile
 from pathlib import Path
 from typing import List, Optional, Tuple, Union
+from logging import getLogger
 
 from archinst.cmd import run
 from archinst.part import Partition
+
+LOGGER = getLogger(__name__)
 
 
 class FileSystem:
@@ -21,6 +24,7 @@ class FileSystem:
         self.label = label
         self.mount_point = str(mount_point)
         self.mount_options = mount_options
+        self.mounted = False
 
 
 class BtrfsFileSystem(FileSystem):
@@ -32,6 +36,13 @@ class BtrfsFileSystem(FileSystem):
         mount_options: Optional[List[str]] = None,
     ):
         super().__init__(partition, "btrfs", label, mount_point, mount_options)
+
+    def create_subvolume(self, name: str):
+        if not self.mounted:
+            raise RuntimeError("base filesystem is not mounted")
+
+        cmd = ["btrfs", "subvolume", "create", name]
+        run(cmd, cwd=self.mount_point)
 
 
 def create_ext4(

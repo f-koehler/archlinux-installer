@@ -29,6 +29,7 @@ def mount_filesystem(filesystem: FileSystem):
         cmd += [filesystem.partition.device, filesystem.mount_point]
 
     run(cmd)
+    filesystem.mounted = True
 
 
 def is_mounted(filesystem: FileSystem) -> bool:
@@ -61,6 +62,7 @@ def unmount_filesystem(filesystem: FileSystem):
         cmd = ["umount", filesystem.partition.device]
 
     run(cmd)
+    filesystem.mounted = False
 
 
 @contextmanager
