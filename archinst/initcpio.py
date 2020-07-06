@@ -1,6 +1,6 @@
 import re
-from typing import List, Union
 from pathlib import Path
+from typing import List, Union
 
 from archinst.cmd import run_chroot
 

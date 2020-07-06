@@ -1,8 +1,8 @@
 import subprocess
 import tempfile
+from logging import getLogger
 from pathlib import Path
 from typing import List, Optional, Tuple, Union
-from logging import getLogger
 
 from archinst.cmd import run
 from archinst.part import Partition

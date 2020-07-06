@@ -1,5 +1,5 @@
-from typing import List, Union, Optional
 from pathlib import Path
+from typing import List, Optional, Union
 
 from archinst.cmd import run
 
