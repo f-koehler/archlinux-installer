@@ -59,7 +59,7 @@ def unmount_filesystem(filesystem: FileSystem):
     if filesystem.type_ == "swap":
         cmd = ["swapoff", filesystem.partition.device]
     else:
-        cmd = ["umount", filesystem.partition.device]
+        cmd = ["umount", filesystem.mount_point]
 
     run(cmd)
     filesystem.mounted = False
