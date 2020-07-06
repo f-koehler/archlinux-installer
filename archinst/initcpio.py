@@ -8,7 +8,7 @@ RE_HOOKS = re.compile(r"^\s*HOOKS\s*=\s*\(([\w\s\n]+)\)", re.MULTILINE)
 
 
 def mkinitcpio(prefix: Union[str, Path] = "/mnt"):
-    run_chroot(["mkinitcpio", "-v", "-P"], prefix=prefix)
+    run_chroot(["mkinitcpio", "-P"], prefix=prefix)
 
 
 def read_hooks() -> List[str]:
