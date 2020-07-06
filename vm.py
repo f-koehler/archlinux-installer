@@ -25,6 +25,9 @@ if __name__ == "__main__":
 
     with mount(filesystems):
         fs_root.create_subvolume("@")
+        fs_root.create_subvolume("@home")
+        fs_root.create_subvolume("@snapshots")
+        fs_root.create_subvolume("@/var/log")
         # subvolumes = [
         #     BtrfsSubvolume("@", "/mnt"),
         #     BtrfsSubvolume("@home", "/mnt/home"),
