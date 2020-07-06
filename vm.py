@@ -4,6 +4,7 @@ import argparse
 from archinst.fs import FileSystem, BtrfsSubvolume
 from archinst.mount import mount
 from archinst.part import PartitionLayout
+import os
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -22,11 +23,12 @@ if __name__ == "__main__":
     ]
 
     with mount(filesystems):
+        os.chdir("/mnt")
         subvolumes = [
-            BtrfsSubvolume("/mnt/@", "/mnt"),
-            BtrfsSubvolume("/mnt/@home", "/mnt/home"),
-            BtrfsSubvolume("/mnt/@snapshots", "/mnt/.snapshots"),
-            BtrfsSubvolume("/mnt/@/var/log", "/mnt/var/log"),
+            BtrfsSubvolume("@", "/mnt"),
+            BtrfsSubvolume("@home", "/mnt/home"),
+            BtrfsSubvolume("@snapshots", "/mnt/.snapshots"),
+            BtrfsSubvolume("@/var/log", "/mnt/var/log"),
         ]
 
     # subvolumes = fs.BtrfsSubvolumes()
