@@ -11,7 +11,7 @@ def install_grub_bios(disk: Union[str, Path]):
     run_chroot(["grub-mkconfig", "-o", "/boot/grub/grub.cfg"])
 
 
-def install_grub_efi(disk: Union[str, Path]):
+def install_grub_efi():
     pacstrap(["grub", "os-prober", "ntfs-3g", "efibootmgr"])
     run_chroot(
         [

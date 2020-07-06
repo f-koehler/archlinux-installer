@@ -6,6 +6,9 @@ from archinst.mount import mount
 from archinst.part import PartitionLayout
 from archinst.reflector import run_reflector
 from archinst.pkg import pacstrap
+from archinst import time
+from archinst import grub
+from archinst.initcpio import mkinitcpio
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -42,12 +45,11 @@ if __name__ == "__main__":
                 "grub-btrfs",
             ]
         )
-        run_reflector("Germany", "/mnt")
+        run_reflector("Germany")
 
-    # with subvolumes.mount(disk + "3"), layout.mount(disk):
-    #     time.set_timezone("Europe/Berlin")
-    #     time.enable_ntp()
-    #     initcpio.mkinitcpio()
-    #     grub.install_grub_efi(disk)
+        time.set_timezone("Europe/Berlin")
 
-    #     user.add_normal_user("fkoehler")
+        # TODO: refactor these to allow different prefix
+        time.enable_ntp()
+        mkinitcpio()
+        grub.install_grub_efi()
