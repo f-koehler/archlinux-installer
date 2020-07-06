@@ -11,14 +11,15 @@ def install_grub_bios(disk: Union[str, Path]):
     run_chroot(["grub-mkconfig", "-o", "/boot/grub/grub.cfg"])
 
 
-def install_grub_efi():
-    pacstrap(["grub", "os-prober", "ntfs-3g", "efibootmgr"])
+def install_grub_efi(prefix: Union[str, Path] = "/mnt"):
+    pacstrap(["grub", "os-prober", "ntfs-3g", "efibootmgr"], prefix=prefix)
     run_chroot(
         [
             "grub-install",
             "--target=x86_64-efi",
             "--efi-directory=/boot/efi",
             "--bootloader-id=ARCHGRUB",
-        ]
+        ],
+        prefix=prefix,
     )
-    run_chroot(["grub-mkconfig", "-o", "/boot/grub/grub.cfg"])
+    run_chroot(["grub-mkconfig", "-o", "/boot/grub/grub.cfg"], prefix=prefix)

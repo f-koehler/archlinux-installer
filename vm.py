@@ -48,8 +48,6 @@ if __name__ == "__main__":
         run_reflector("Germany")
 
         time.set_timezone("Europe/Berlin")
-
-        # TODO: refactor these to allow different prefix
         time.enable_ntp()
         mkinitcpio()
         grub.install_grub_efi()

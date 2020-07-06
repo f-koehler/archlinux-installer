@@ -16,5 +16,9 @@ def run(
     subprocess.run(command, check=True, env=env, cwd=cwd)
 
 
-def run_chroot(command: List[str], environment: Optional[Dict[str, str]] = None):
-    run(["arch-chroot", "/mnt"] + command, environment)
+def run_chroot(
+    command: List[str],
+    environment: Optional[Dict[str, str]] = None,
+    prefix: Union[str, Path] = "/mnt",
+):
+    run(["arch-chroot", str(prefix)] + command, environment)

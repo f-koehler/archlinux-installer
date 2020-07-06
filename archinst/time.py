@@ -15,5 +15,5 @@ def set_timezone(name: str = "Europe/Berlin", prefix: Union[Path, str] = "/mnt")
     run_chroot(["hwclock", "--systohc"])
 
 
-def enable_ntp():
-    run_chroot(["timedatectl", "set-ntp", "true"])
+def enable_ntp(prefix: Union[str, Path] = "/mnt"):
+    run_chroot(["timedatectl", "set-ntp", "true"], prefix=prefix)

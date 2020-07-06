@@ -1,13 +1,14 @@
 import re
-from typing import List
+from typing import List, Union
+from pathlib import Path
 
 from archinst.cmd import run_chroot
 
 RE_HOOKS = re.compile(r"^\s*HOOKS\s*=\s*\(([\w\s\n]+)\)", re.MULTILINE)
 
 
-def mkinitcpio():
-    run_chroot(["mkinitcpio", "-v", "-P"])
+def mkinitcpio(prefix: Union[str, Path] = "/mnt"):
+    run_chroot(["mkinitcpio", "-v", "-P"], prefix=prefix)
 
 
 def read_hooks() -> List[str]:
