@@ -107,46 +107,61 @@ class FileSystem:
         )
 
 
-def create_btrfs_subvolume(path: Union[str, Path]):
-    run(["btrfs", "subvolume", "create", str(path)])
+class BtrfsSubvolume:
+    def __init__(
+        self,
+        name: Union[str, Path],
+        path: Optional[Union[str, Path]] = None,
+        mount_options: Optional[List[str]] = None,
+    ):
+        self.name = str(name)
+        self.path = Path(name) if path is None else Path(path)
+        self.mount_options = mount_options
+
+        cmd = ["btrfs", "subvolume", "create", self.name]
+        run(cmd)
 
 
-def generate_fs_table():
-    fstab = subprocess.check_output(["genfstab", "-U", "/mnt"]).decode()
-    with open("/mnt/etc/fstab", "a") as fptr:
-        fptr.write(fstab)
+# def create_btrfs_subvolume(path: Union[str, Path]):
+#     run(["btrfs", "subvolume", "create", str(path)])
 
 
-class BtrfsSubvolumes:
-    MountInfo = Union[str, Tuple[Union[str, Path], List[str]]]
+# def generate_fs_table():
+#     fstab = subprocess.check_output(["genfstab", "-U", "/mnt"]).decode()
+#     with open("/mnt/etc/fstab", "a") as fptr:
+#         fptr.write(fstab)
 
-    def __init__(self):
-        self.subvolumes: List[Tuple[Union[str, Path], Optional[MountInfo]]] = []
 
-    def add(self, path: Union[str, Path], mount: Optional[MountInfo] = None):
-        self.subvolumes.append((path, mount))
+# class BtrfsSubvolumes:
+#     MountInfo = Union[str, Tuple[Union[str, Path], List[str]]]
 
-    def apply(self, path: Union[str, Path]):
-        with tempfile.TemporaryDirectory() as tmpdir:
-            with mount_single(path, tmpdir):
-                for subvolume in self.subvolumes:
-                    create_btrfs_subvolume(Path(tmpdir) / subvolume[0])
+#     def __init__(self):
+#         self.subvolumes: List[Tuple[Union[str, Path], Optional[MountInfo]]] = []
 
-    def mount(self, partition: Union[str, Path]):
-        mounts: List[MountEntry] = []
-        for subvolume in self.subvolumes:
-            if subvolume[1] is None:
-                continue
-            if isinstance(subvolume[1], str):
-                mounts.append(
-                    (partition, subvolume[1], ["subvol=" + str(subvolume[0])])
-                )
-                continue
-            mounts.append(
-                (
-                    partition,
-                    subvolume[1][0],
-                    ["subvol=" + str(subvolume[0])] + subvolume[1][1],
-                )
-            )
-        return mount_list(mounts)
+#     def add(self, path: Union[str, Path], mount: Optional[MountInfo] = None):
+#         self.subvolumes.append((path, mount))
+
+#     def apply(self, path: Union[str, Path]):
+#         with tempfile.TemporaryDirectory() as tmpdir:
+#             with mount_single(path, tmpdir):
+#                 for subvolume in self.subvolumes:
+#                     create_btrfs_subvolume(Path(tmpdir) / subvolume[0])
+
+#     def mount(self, partition: Union[str, Path]):
+#         mounts: List[MountEntry] = []
+#         for subvolume in self.subvolumes:
+#             if subvolume[1] is None:
+#                 continue
+#             if isinstance(subvolume[1], str):
+#                 mounts.append(
+#                     (partition, subvolume[1], ["subvol=" + str(subvolume[0])])
+#                 )
+#                 continue
+#             mounts.append(
+#                 (
+#                     partition,
+#                     subvolume[1][0],
+#                     ["subvol=" + str(subvolume[0])] + subvolume[1][1],
+#                 )
+#             )
+#         return mount_list(mounts)

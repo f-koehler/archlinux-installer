@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import argparse
 
-from archinst.fs import FileSystem
+from archinst.fs import FileSystem, BtrfsSubvolume
 from archinst.mount import mount
 from archinst.part import PartitionLayout
 
@@ -22,7 +22,12 @@ if __name__ == "__main__":
     ]
 
     with mount(filesystems):
-        pass
+        subvolumes = [
+            BtrfsSubvolume("@", "/"),
+            BtrfsSubvolume("@home", "/home"),
+            BtrfsSubvolume("@snapshots", "/.snapshots"),
+            BtrfsSubvolume("@/var/log", "/var/log"),
+        ]
 
     # subvolumes = fs.BtrfsSubvolumes()
     # subvolumes.add("@", "/mnt/")
