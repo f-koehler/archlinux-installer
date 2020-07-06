@@ -41,6 +41,9 @@ class BtrfsFileSystem(FileSystem):
         if not self.mounted:
             raise RuntimeError("base filesystem is not mounted")
 
+        subvolume_path = Path(self.mount_point) / name
+        subvolume_path.parent.mkdir(parents=True, exist_ok=True)
+
         cmd = ["btrfs", "subvolume", "create", name]
         run(cmd, cwd=self.mount_point)
 
