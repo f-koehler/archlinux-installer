@@ -37,7 +37,10 @@ class BtrfsFileSystem(FileSystem):
     ):
         super().__init__(partition, "btrfs", label, mount_point, mount_options)
 
-    def create_subvolume(self, name: str):
+    def create_subvolume(self, name: str) -> FileSystem:
+        if self.mount_point is None:
+            raise RuntimeError("btrfs filesystem does not have mountpoint")
+
         if not self.mounted:
             raise RuntimeError("base filesystem is not mounted")
 

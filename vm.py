@@ -18,7 +18,7 @@ if __name__ == "__main__":
 
     fs_root = fs.create_btrfs(part_root, "arch_root", "/mnt/")
     fs_efi = fs.create_vfat32(part_efi, "efi", "/mnt/boot/efi")
-    fs_swap = (fs.create_swap(part_swap, "arch_swap"),)
+    fs_swap = fs.create_swap(part_swap, "arch_swap")
 
     with mount([fs_root, fs_efi, fs_swap]):
         subvolumes = [
