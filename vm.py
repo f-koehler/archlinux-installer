@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import argparse
 
-from archinst.fs import FileSystem, BtrfsSubvolume
+from archinst import fs
 from archinst.mount import mount
 from archinst.part import PartitionLayout
 import os
@@ -17,19 +17,19 @@ if __name__ == "__main__":
     part_root = layout.append("btrfs", "100%")
 
     filesystems = [
-        FileSystem.create_btrfs(part_root, "arch_root", "/mnt/"),
-        FileSystem.create_vfat32(part_efi, "efi", "/mnt/boot/efi"),
-        FileSystem.create_swap(part_swap, "arch_swap"),
+        fs.create_btrfs(part_root, "arch_root", "/mnt/"),
+        fs.create_vfat32(part_efi, "efi", "/mnt/boot/efi"),
+        fs.create_swap(part_swap, "arch_swap"),
     ]
 
     with mount(filesystems):
-        os.chdir("/mnt")
-        subvolumes = [
-            BtrfsSubvolume("@", "/mnt"),
-            BtrfsSubvolume("@home", "/mnt/home"),
-            BtrfsSubvolume("@snapshots", "/mnt/.snapshots"),
-            BtrfsSubvolume("@/var/log", "/mnt/var/log"),
-        ]
+        pass
+        # subvolumes = [
+        #     BtrfsSubvolume("@", "/mnt"),
+        #     BtrfsSubvolume("@home", "/mnt/home"),
+        #     BtrfsSubvolume("@snapshots", "/mnt/.snapshots"),
+        #     BtrfsSubvolume("@/var/log", "/mnt/var/log"),
+        # ]
 
     # subvolumes = fs.BtrfsSubvolumes()
     # subvolumes.add("@", "/mnt/")
