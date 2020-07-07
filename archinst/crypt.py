@@ -24,7 +24,7 @@ def luks_container(block_device: BlockDevice, mapper_name: str, password: str):
             command, stderr=sys.stderr, stdout=sys.stdout, stdin=subprocess.PIPE
         ).communicate(input=password.encode())
 
-        command = ["cryptsetup", "-v", "open", str(block_device), mapper_name]
+        command = ["cryptsetup", "-v", "open", block_device.path, mapper_name]
         run(command)
         yield BlockDevice(Path("/") / "dev" / "mapper" / mapper_name)
     finally:
