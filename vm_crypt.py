@@ -19,7 +19,7 @@ if __name__ == "__main__":
     part_swap = layout.append("2000MiB", "linux-swap")
     part_root = layout.append("100%")
 
-    with luks_container(part_root, "root") as root_crypt:
+    with luks_container(part_root, "root", "test") as root_crypt:
         fs_root = fs.create_btrfs(root_crypt, "arch_root", "/mnt/")
         fs_efi = fs.create_vfat32(part_efi, "efi", "/mnt/boot/efi")
         fs_swap = fs.create_swap(part_swap, "arch_swap")
