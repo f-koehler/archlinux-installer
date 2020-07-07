@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Union
+from typing import List, Optional, Union
 
 from archinst.block_device import BlockDevice
 from archinst.cmd import run
@@ -16,7 +16,7 @@ class Partition(BlockDevice):
         number: int,
         start: str,
         end: str,
-        type_: str,
+        type_: Optional[str] = None,
     ):
         self.base_device = str(base_device)
         super().__init__(self.base_device + str(number))
@@ -37,7 +37,7 @@ class PartitionLayout:
         clear_disk(device)
         return PartitionLayout(device, "gpt")
 
-    def append(self, type_: str, end: str = "100%"):
+    def append(self, end: str = "100%", type_: Optional[str] = None):
         if self.partitions:
             start = self.partitions[-1].end
         else:
@@ -45,20 +45,25 @@ class PartitionLayout:
 
         partition = Partition(self.path, len(self.partitions) + 1, start, end, type_)
 
-        run(
-            [
-                "parted",
-                "-s",
-                "-a",
-                "optimal",
-                str(self.path),
-                "mkpart",
-                "primary",
-                partition.type_,
-                partition.start,
-                partition.end,
-            ]
-        )
+        command = [
+            "parted",
+            "-s",
+            "-a",
+            "optimal",
+            str(self.path),
+            "mkpart",
+            "primary",
+        ]
+
+        if partition.type_ is not None:
+            command.append(partition.type_)
+
+        command += [
+            partition.start,
+            partition.end,
+        ]
+
+        run(command)
 
         self.partitions.append(partition)
         return partition

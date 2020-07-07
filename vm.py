@@ -2,7 +2,6 @@
 import argparse
 
 from archinst import fs, grub, time
-from archinst.crypt import luks_container
 from archinst.initcpio import mkinitcpio
 from archinst.mount import mount
 from archinst.part import PartitionLayout
@@ -15,9 +14,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     layout = PartitionLayout.create_empty_gpt(args.drive)
-    part_efi = layout.append("fat32", "200MiB")
-    part_swap = layout.append("linux-swap", "2000MiB")
-    part_root = layout.append("btrfs", "100%")
+    part_efi = layout.append("200MiB", "fat32")
+    part_swap = layout.append("2000MiB", "linux-swap")
+    part_root = layout.append("100%", "btrfs")
 
     fs_root = fs.create_btrfs(part_root, "arch_root", "/mnt/")
     fs_efi = fs.create_vfat32(part_efi, "efi", "/mnt/boot/efi")
