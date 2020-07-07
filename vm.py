@@ -2,6 +2,7 @@
 import argparse
 
 from archinst import fs, grub, time
+from archinst.crypt import luks_container
 from archinst.initcpio import mkinitcpio
 from archinst.mount import mount
 from archinst.part import PartitionLayout
