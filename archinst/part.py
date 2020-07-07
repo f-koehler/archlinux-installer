@@ -9,7 +9,7 @@ def clear_disk(disk: Union[str, Path], label: str = "gpt"):
     run(["parted", "-s", str(disk), "mklabel", label])
 
 
-class Partition:
+class Partition(BlockDevice):
     def __init__(
         self,
         base_device: Union[str, Path],
@@ -19,7 +19,7 @@ class Partition:
         type_: str,
     ):
         self.base_device = str(base_device)
-        self.path = self.base_device + str(number)
+        super().__init__(self.base_device + str(number))
         self.number = number
         self.start = start
         self.end = end
