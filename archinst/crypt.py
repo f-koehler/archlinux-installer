@@ -1,28 +1,32 @@
+import subprocess
+import sys
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Union
 
+from archinst.block_device import BlockDevice
 from archinst.cmd import run
 
 
 @contextmanager
-def luks_container(device: Union[str, Path], mapper_name: str, password: str):
+def luks_container(block_device: BlockDevice, mapper_name: str, password: str):
     try:
         command = [
             "cryptsetup",
             "-v",
             "luksFormat",
-            str(device),
+            block_device.path,
             "--type",
             "luks",
             "--key-file",
             "-",
         ]
-        run(command)
+        subprocess.Popen(
+            command, stderr=sys.stderr, stdout=sys.stdout, stdin=subprocess.PIPE
+        ).communicate(input=password.encode())
 
-        command = ["cryptsetup", "-v", "open", str(device), mapper_name]
+        command = ["cryptsetup", "-v", "open", str(block_device), mapper_name]
         run(command)
-        yield
+        yield BlockDevice(Path("/") / "dev" / "mapper" / mapper_name)
     finally:
         try:
             command = ["cryptsetup", "-v", "close", mapper_name]
