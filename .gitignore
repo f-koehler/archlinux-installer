@@ -2,3 +2,4 @@
 .venv/
 poetry.lock
 archinst.egg-info/
+.vim/.ropeproject/
