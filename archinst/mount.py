@@ -20,13 +20,13 @@ def mount_filesystem(filesystem: FileSystem):
         cmd = ["swapon"]
         if filesystem.mount_options:
             cmd += ["-o", ",".join(filesystem.mount_options)]
-        cmd.append(filesystem.partition.device)
+        cmd.append(filesystem.block_device.path)
     else:
         Path(filesystem.mount_point).mkdir(parents=True, exist_ok=True)
         cmd = ["mount", "-t", filesystem.type_]
         if filesystem.mount_options:
             cmd += ["-o", ",".join(filesystem.mount_options)]
-        cmd += [filesystem.partition.device, filesystem.mount_point]
+        cmd += [filesystem.block_device.path, filesystem.mount_point]
 
     run(cmd)
     filesystem.mounted = True
@@ -40,14 +40,14 @@ def is_mounted(filesystem: FileSystem) -> bool:
         with open("/proc/swaps", "r") as fptr:
             for line in fptr.readlines()[1:]:
                 device = line.split()[0].strip()
-                if Path(device) == Path(filesystem.partition.device):
+                if Path(device) == Path(filesystem.block_device.path):
                     return True
         return False
 
     with open("/proc/mounts", "r") as fptr:
         for line in fptr.readlines():
             device = line.split()[0].strip()
-            if Path(device) == Path(filesystem.partition.device):
+            if Path(device) == Path(filesystem.block_device.path):
                 return True
 
     return False
@@ -57,7 +57,7 @@ def unmount_filesystem(filesystem: FileSystem):
     cmd: List[str] = []
 
     if filesystem.type_ == "swap":
-        cmd = ["swapoff", filesystem.partition.device]
+        cmd = ["swapoff", filesystem.block_device.path]
     else:
         cmd = ["umount", filesystem.mount_point]
 
