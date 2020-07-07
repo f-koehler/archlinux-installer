@@ -1,6 +1,7 @@
 from pathlib import Path
-from typing import List, Optional, Tuple, Union
+from typing import List, Union
 
+from archinst.block_device import BlockDevice
 from archinst.cmd import run
 
 
@@ -18,7 +19,7 @@ class Partition:
         type_: str,
     ):
         self.base_device = str(base_device)
-        self.device = self.base_device + str(number)
+        self.path = self.base_device + str(number)
         self.number = number
         self.start = start
         self.end = end
@@ -26,8 +27,8 @@ class Partition:
 
 
 class PartitionLayout:
-    def __init__(self, device: Union[str, Path], label: str = "gpt"):
-        self.device = str(device)
+    def __init__(self, path: Union[str, Path], label: str = "gpt"):
+        self.path = str(path)
         self.label = label
         self.partitions: List[Partition] = []
 
@@ -42,7 +43,7 @@ class PartitionLayout:
         else:
             start = "0%"
 
-        partition = Partition(self.device, len(self.partitions) + 1, start, end, type_)
+        partition = Partition(self.path, len(self.partitions) + 1, start, end, type_)
 
         run(
             [
@@ -50,7 +51,7 @@ class PartitionLayout:
                 "-s",
                 "-a",
                 "optimal",
-                str(self.device),
+                str(self.path),
                 "mkpart",
                 "primary",
                 partition.type_,
