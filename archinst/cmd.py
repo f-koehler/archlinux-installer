@@ -25,8 +25,8 @@ def run_chroot(
 ):
     extra_flags = []
     if username is not None:
-        userspec = "--userspec=" + username
+        userspec = username
         if group is not None:
             userspec += ":" + group
-        extra_flags.append(userspec)
+        extra_flags += ["-u", userspec]
     run(["arch-chroot"] + extra_flags + [str(prefix)] + command, environment)
