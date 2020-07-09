@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import argparse
 
-from archinst import fs, grub, time
+from archinst import fs, grub, systemctl, time, user
 from archinst.initcpio import mkinitcpio
 from archinst.mount import mount
 from archinst.part import PartitionLayout
@@ -41,6 +41,7 @@ if __name__ == "__main__":
                 "linux-firmware",
                 "btrfs-progs",
                 "grub-btrfs",
+                "networkmanager",
             ]
         )
         run_reflector("Germany")
@@ -49,3 +50,10 @@ if __name__ == "__main__":
         time.enable_ntp()
         mkinitcpio()
         grub.install_grub_efi()
+
+        systemctl.enable("NetworkManager.service")
+
+        user.add_normal_user("user")
+        user.add_sudoer("user")
+        user.set_password("user", "user")
+        user.set_password("root", "root")
