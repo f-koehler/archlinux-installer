@@ -20,5 +20,12 @@ def run_chroot(
     command: List[str],
     environment: Optional[Dict[str, str]] = None,
     prefix: Union[str, Path] = "/mnt",
+    username: Optional[str] = None,
+    group: Optional[str] = None,
 ):
-    run(["arch-chroot", str(prefix)] + command, environment)
+    extra = []
+    if username is not None:
+        extra.append("--userspec=" + username)
+        if group is not None:
+            extra[0].append(":" + group)
+    run(["arch-chroot"] + extra + [str(prefix)] + command, environment)
