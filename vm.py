@@ -62,6 +62,7 @@ if __name__ == "__main__":
         user.set_password("root", "root")
 
         git.clone(
-            "https://github.com/f-koehler/dotfiles.git", "~/code/dotfiles",
+            "https://github.com/f-koehler/dotfiles.git",
+            "/mnt/home/fkoehler/code/dotfiles",
         )
         cmd.run_chroot(["~/code/dotfiles/run"], username="fkoehler", group="fkoehler")
