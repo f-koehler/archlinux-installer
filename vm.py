@@ -37,14 +37,17 @@ if __name__ == "__main__":
         run_reflector("Germany", "/")
         pacstrap(
             [
+                "ansible",
                 "base",
                 "base-devel",
+                "btrfs-progs",
+                "git",
+                "grub-btrfs",
                 "linux",
                 "linux-firmware",
-                "btrfs-progs",
-                "grub-btrfs",
                 "networkmanager",
-                "ansible",
+                "snap-pac",
+                "snapper",
             ]
         )
         run_reflector("Germany")
