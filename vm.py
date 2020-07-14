@@ -65,4 +65,6 @@ if __name__ == "__main__":
             "https://github.com/f-koehler/dotfiles.git",
             "/mnt/home/fkoehler/code/dotfiles",
         )
-        cmd.run_chroot(["~/code/dotfiles/run"], username="fkoehler", group="fkoehler")
+        cmd.run_chroot(
+            ["./run"], username="fkoehler", group="fkoehler", cwd="~/code/dotfiles"
+        )

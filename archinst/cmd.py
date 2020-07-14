@@ -22,6 +22,7 @@ def run_chroot(
     prefix: Union[str, Path] = "/mnt",
     username: Optional[str] = None,
     group: Optional[str] = None,
+    cwd: Optional[Union[str, Path]] = None,
 ):
     extra_flags = []
     if username is not None:
@@ -29,4 +30,11 @@ def run_chroot(
         if group is not None:
             userspec += ":" + group
         extra_flags += ["-u", userspec]
-    run(["arch-chroot"] + extra_flags + [str(prefix)] + command, environment)
+
+    sh_cmd = " ".join(command)
+    if cwd is not None:
+        sh_cmd = "cd " + str(cwd) + "&&" + sh_cmd
+    run(
+        ["arch-chroot"] + extra_flags + [str(prefix)] + ["sh", "-c", sh_cmd],
+        environment,
+    )
