@@ -66,5 +66,8 @@ if __name__ == "__main__":
             "/mnt/home/fkoehler/code/dotfiles",
         )
         cmd.run_chroot(
-            ["./run"], username="fkoehler", group="fkoehler", cwd="~/code/dotfiles"
+            ["./run"],
+            username="fkoehler",
+            group="fkoehler",
+            cwd="/home/fkoehler/code/dotfiles",
         )
