@@ -56,8 +56,8 @@ if __name__ == "__main__":
 
         systemctl.enable("NetworkManager.service")
 
-        user.add_normal_user("user")
-        user.add_sudoer("user")
+        user.add_normal_user("fkoehler")
+        user.add_sudoer("fkoehler")
         user.set_password("fkoehler", "test")
         user.set_password("root", "root")
 
