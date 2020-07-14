@@ -24,17 +24,17 @@ def run_chroot(
     group: Optional[str] = None,
     cwd: Optional[Union[str, Path]] = None,
 ):
-    extra_flags = []
-    if username is not None:
-        userspec = username
-        if group is not None:
-            userspec += ":" + group
-        extra_flags += ["-u", userspec]
+    sh_command = "su --login --pty"
 
-    sh_cmd = " ".join(command)
+    if group is not None:
+        sh_command += " --group=" + group
+
+    if username is not None:
+        sh_command += " " + username
+
     if cwd is not None:
-        sh_cmd = "cd " + str(cwd) + "&&" + sh_cmd
-    run(
-        ["arch-chroot"] + extra_flags + [str(prefix)] + ["sh", "-c", sh_cmd],
-        environment,
-    )
+        sh_command += ' --command "cd {} && {}"'.format(str(cwd), " ".join(command))
+    else:
+        sh_command += ' --command "{}"'.format(" ".join(command))
+
+    run(["arch-chroot", str(prefix), "sh", "-c", sh_command], environment)
