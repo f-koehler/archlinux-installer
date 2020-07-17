@@ -54,7 +54,7 @@ if __name__ == "__main__":
                 initcpio.insert_hook_after(hooks, "keyboard", "autodetect")
                 initcpio.insert_hook_after(hooks, "keymap", "keyboard")
                 initcpio.insert_hook_after(hooks, "consolefont", "keymap")
-                initcpio.insert_hook_after(hooks, "block", "encrypt")
+                initcpio.insert_hook_after(hooks, "enctrypt", "block")
                 initcpio.insert_hook_after(hooks, "filesystem", "btrfs")
                 initcpio.write_hooks(hooks)
                 initcpio.mkinitcpio()
