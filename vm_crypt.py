@@ -58,4 +58,9 @@ if __name__ == "__main__":
                 initcpio.insert_hook_after(hooks, "filesystem", "btrfs")
                 initcpio.write_hooks(hooks)
                 initcpio.mkinitcpio()
+
+                parameters = grub.read_kernel_parameters()
+                parameters.append("root=/dev/mapper/root")
+                grub.write_kernel_parameters(parameters)
+
                 grub.install_grub_efi()
