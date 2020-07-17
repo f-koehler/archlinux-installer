@@ -2,7 +2,7 @@
 import argparse
 
 from archinst import fs, grub, time
-from archinst.initcpio import mkinitcpio
+from archinst import initcpio
 from archinst.mount import mount
 from archinst.part import PartitionLayout
 from archinst.pkg import pacstrap
@@ -49,5 +49,13 @@ if __name__ == "__main__":
 
                 time.set_timezone("Europe/Berlin")
                 time.enable_ntp()
-                mkinitcpio()
+
+                hooks = initcpio.read_hooks()
+                initcpio.insert_hook_after(hooks, "keyboard", "autodetect")
+                initcpio.insert_hook_after(hooks, "keymap", "keyboard")
+                initcpio.insert_hook_after(hooks, "consolefont", "keymap")
+                initcpio.insert_hook_after(hooks, "block", "encrypt")
+                initcpio.insert_hook_after(hooks, "filesystem", "btrfs")
+                initcpio.write_hooks(hooks)
+                initcpio.mkinitcpio()
                 grub.install_grub_efi()
