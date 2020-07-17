@@ -58,15 +58,22 @@ def remove_matching_kernel_parameters(
 
 
 def write_kernel_parameters(parameters: List[str], prefix: Union[str, Path] = "/mnt"):
-    line = 'GRUB_CMDLINE_LINUX_DEFAULT="{}"'.format(" ".join(parameters))
+    new_line = 'GRUB_CMDLINE_LINUX_DEFAULT="{}"'.format(" ".join(parameters))
 
     with open(Path(prefix) / "etc" / "default" / "grub", "r") as fptr:
-        (config, n) = RE_KERNEL_PARAMETERS.subn(line, fptr.read())
-        if n < 1:
-            raise RuntimeError("failed to replace parameters line in grub config")
-        elif n > 1:
-            LOGGER.warning("replaced more than one parameters line in grub config")
+        new_config = []
+        replaced = False
+        for line in fptr:
+            if RE_KERNEL_PARAMETERS.match(line):
+                new_config.append(new_line)
+                replaced = True
+            else:
+                new_config.append(line)
+
+        if not replaced:
+            LOGGER.warn("did not find kernel parameter line in grub config, append it")
+            new_config.append(new_line)
 
     with open(Path(prefix) / "etc" / "default" / "grub", "w") as fptr:
-        fptr.write(config)
+        fptr.writelines(new_config)
         LOGGER.info("wrote the following kernel parameters: %s", str(parameters))
