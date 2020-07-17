@@ -1,10 +1,13 @@
 import re
 from pathlib import Path
 from typing import List, Union
+from logging import getLogger
 
 from archinst.cmd import run_chroot
 from archinst.pkg import pacstrap
 
+
+LOGGER = getLogger(__name__)
 RE_KERNEL_PARAMETERS = re.compile(r"^GRUB_CMDLINE_LINUX_DEFAULT=\"(.+)\"$")
 
 
@@ -57,8 +60,7 @@ def remove_matching_kernel_parameters(
 def write_kernel_parameters(parameters: List[str], prefix: Union[str, Path] = "/mnt"):
     line = 'GRUB_CMDLINE_LINUX_DEFAULT="{}"'.format(" ".join(parameters))
     with open(Path(prefix) / "etc" / "default" / "grub", "r") as fptr:
-        config, num = RE_KERNEL_PARAMETERS.subn(line, fptr.read())
-        if num < 1:
-            config += "\n" + line
+        config = RE_KERNEL_PARAMETERS.sub(line, fptr.read())
     with open(Path(prefix) / "etc" / "default" / "grub", "w") as fptr:
         fptr.write(config)
+        LOGGER.info("wrote the following kernel parameters: %s", str(parameters))

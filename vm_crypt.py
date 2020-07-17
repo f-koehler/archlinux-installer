@@ -64,5 +64,4 @@ if __name__ == "__main__":
                 parameters.append("root=/dev/mapper/root")
                 grub.remove_matching_kernel_parameters(parameters, "^root=")
                 grub.write_kernel_parameters(parameters)
-
                 grub.install_grub_efi()
