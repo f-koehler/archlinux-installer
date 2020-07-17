@@ -34,20 +34,20 @@ if __name__ == "__main__":
             with mount(subvolumes):
                 fs.generate_fstab()
 
-            run_reflector("Germany", "/")
-            pacstrap(
-                [
-                    "base",
-                    "base-devel",
-                    "linux",
-                    "linux-firmware",
-                    "btrfs-progs",
-                    "grub-btrfs",
-                ]
-            )
-            run_reflector("Germany")
+                run_reflector("Germany", "/")
+                pacstrap(
+                    [
+                        "base",
+                        "base-devel",
+                        "linux",
+                        "linux-firmware",
+                        "btrfs-progs",
+                        "grub-btrfs",
+                    ]
+                )
+                run_reflector("Germany")
 
-            time.set_timezone("Europe/Berlin")
-            time.enable_ntp()
-            mkinitcpio()
-            grub.install_grub_efi()
+                time.set_timezone("Europe/Berlin")
+                time.enable_ntp()
+                mkinitcpio()
+                grub.install_grub_efi()
