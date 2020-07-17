@@ -1,14 +1,11 @@
 #!/usr/bin/env python
 import argparse
 
-from archinst import fs, grub, systemctl, time, user
-from archinst import initcpio
+from archinst import cmd, fs, git, grub, initcpio, systemctl, time, user
 from archinst.mount import mount
 from archinst.part import PartitionLayout
 from archinst.pkg import pacstrap
 from archinst.reflector import run_reflector
-from archinst import git
-from archinst import cmd
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

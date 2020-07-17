@@ -1,6 +1,6 @@
-from pathlib import Path
-from typing import Union, List
 import re
+from pathlib import Path
+from typing import List, Union
 
 from archinst.cmd import run_chroot
 from archinst.pkg import pacstrap
