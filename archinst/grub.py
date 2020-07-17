@@ -61,7 +61,11 @@ def write_kernel_parameters(parameters: List[str], prefix: Union[str, Path] = "/
     line = 'GRUB_CMDLINE_LINUX_DEFAULT="{}"'.format(" ".join(parameters))
 
     with open(Path(prefix) / "etc" / "default" / "grub", "r") as fptr:
-        config = RE_KERNEL_PARAMETERS.sub(line, fptr.read())
+        (config, n) = RE_KERNEL_PARAMETERS.subn(line, fptr.read())
+        if n < 1:
+            raise RuntimeError("failed to replace parameters line in grub config")
+        elif n > 1:
+            LOGGER.warning("replaced more than one parameters line in grub config")
 
     with open(Path(prefix) / "etc" / "default" / "grub", "w") as fptr:
         fptr.write(config)
