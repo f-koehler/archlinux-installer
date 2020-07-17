@@ -59,8 +59,10 @@ def remove_matching_kernel_parameters(
 
 def write_kernel_parameters(parameters: List[str], prefix: Union[str, Path] = "/mnt"):
     line = 'GRUB_CMDLINE_LINUX_DEFAULT="{}"'.format(" ".join(parameters))
+
     with open(Path(prefix) / "etc" / "default" / "grub", "r") as fptr:
         config = RE_KERNEL_PARAMETERS.sub(line, fptr.read())
+
     with open(Path(prefix) / "etc" / "default" / "grub", "w") as fptr:
         fptr.write(config)
         LOGGER.info("wrote the following kernel parameters: %s", str(parameters))
