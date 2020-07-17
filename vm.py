@@ -52,7 +52,7 @@ if __name__ == "__main__":
         time.set_timezone("Europe/Berlin")
         time.enable_ntp()
         hooks = initcpio.read_hooks()
-        initcpio.insert_hook_after(hooks, "filesystem", "btrfs")
+        initcpio.insert_hook_after(hooks, "btrfs", "filesystem")
         initcpio.write_hooks(hooks)
         initcpio.mkinitcpio()
         grub.install_grub_efi()
