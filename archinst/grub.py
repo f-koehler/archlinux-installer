@@ -1,13 +1,13 @@
 import re
 from pathlib import Path
 from typing import List, Union
-from logging import getLogger
 
 from archinst.cmd import run_chroot
 from archinst.pkg import pacstrap
+from archinst import log
 
 
-LOGGER = getLogger(__name__)
+LOGGER = log.get_logger(__name__)
 RE_KERNEL_PARAMETERS = re.compile(r"^GRUB_CMDLINE_LINUX_DEFAULT=\"(.+)\"$")
 
 

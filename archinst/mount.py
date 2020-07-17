@@ -1,14 +1,23 @@
-import subprocess
 from contextlib import contextmanager
-from logging import getLogger
 from pathlib import Path
 from typing import List, Union, Dict
 import traceback
 
 from archinst.cmd import run
 from archinst.fs import FileSystem
+from archinst import log
 
-LOGGER = getLogger(__name__)
+LOGGER = log.get_logger(__name__)
+
+
+def _shorten_message(exception: Exception) -> str:
+    full_message = str(exception)
+    if len(full_message) > 80:
+        message = full_message[:80] + " …"
+    else:
+        message = full_message
+
+    return message + " (see above)"
 
 
 class UnmountingExceptions(Exception):
@@ -17,7 +26,10 @@ class UnmountingExceptions(Exception):
         super().__init__(
             "{\n"
             + "\n\t".join(
-                (fs.mount_point + ": " + str(exceptions[fs]) for fs in exceptions)
+                (
+                    fs.mount_point + ": " + _shorten_message(exceptions[fs])
+                    for fs in exceptions
+                )
             )
             + "\n}"
         )
@@ -102,6 +114,7 @@ def mount(filesystem: Union[FileSystem, List[FileSystem]]):
                     'unmounting the filesystem mounted at "%s" raised an exception',
                     fs.mount_point,
                 )
+                LOGGER.error("exception: %s", traceback.format_exc())
                 LOGGER.error("I will unmount the remaining filesystems")
                 unmount_exceptions[fs] = ex
 

@@ -1,12 +1,12 @@
 import subprocess
-from logging import getLogger
 from pathlib import Path
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Union
 
 from archinst.block_device import BlockDevice
 from archinst.cmd import run
+from archinst import log
 
-LOGGER = getLogger(__name__)
+LOGGER = log.get_logger(__name__)
 
 
 class FileSystem:
