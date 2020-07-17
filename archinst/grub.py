@@ -58,7 +58,7 @@ def remove_matching_kernel_parameters(
 
 
 def write_kernel_parameters(parameters: List[str], prefix: Union[str, Path] = "/mnt"):
-    new_line = 'GRUB_CMDLINE_LINUX_DEFAULT="{}"'.format(" ".join(parameters))
+    new_line = 'GRUB_CMDLINE_LINUX_DEFAULT="{}"\n'.format(" ".join(parameters))
 
     with open(Path(prefix) / "etc" / "default" / "grub", "r") as fptr:
         new_config = []
