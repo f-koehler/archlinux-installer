@@ -39,6 +39,21 @@ def read_kernel_parameters(prefix: Union[str, Path] = "/mnt") -> List[str]:
     return match.group(1).split()
 
 
+def remove_matching_kernel_parameters(
+    parameters: List[str], pattern: Union[str, re.Pattern]
+):
+    if isinstance(pattern, re.Pattern):
+        regex = pattern
+    else:
+        regex = re.compile(pattern)
+
+    new_parameters = []
+    for parameter in parameters:
+        if not regex.match(parameter):
+            new_parameters.append(parameter)
+    parameters = new_parameters
+
+
 def write_kernel_parameters(parameters: List[str], prefix: Union[str, Path] = "/mnt"):
     line = 'GRUB_CMDLINE_LINUX_DEFAULT="{}"'.format(" ".join(parameters))
     with open(Path(prefix) / "etc" / "default" / "grub", "r") as fptr:

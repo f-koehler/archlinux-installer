@@ -60,7 +60,9 @@ if __name__ == "__main__":
                 initcpio.mkinitcpio()
 
                 parameters = grub.read_kernel_parameters()
+                parameters.append("cryptdevice=" + part_root.get_uuid() + ":root")
                 parameters.append("root=/dev/mapper/root")
+                grub.remove_matching_kernel_parameters(parameters, "^root=")
                 grub.write_kernel_parameters(parameters)
 
                 grub.install_grub_efi()
