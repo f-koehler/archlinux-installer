@@ -55,7 +55,7 @@ if __name__ == "__main__":
                 initcpio.insert_hook_after(hooks, "keymap", "keyboard")
                 initcpio.insert_hook_after(hooks, "consolefont", "keymap")
                 initcpio.insert_hook_after(hooks, "enctrypt", "block")
-                initcpio.insert_hook_after(hooks, "btrfs", "filesystem")
+                initcpio.insert_hook_after(hooks, "btrfs", "filesystems")
                 initcpio.write_hooks(hooks)
                 initcpio.mkinitcpio()
 
