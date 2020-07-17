@@ -1,8 +1,11 @@
 from pathlib import Path
-from typing import Union
+from typing import Union, List
+import re
 
 from archinst.cmd import run_chroot
 from archinst.pkg import pacstrap
+
+RE_KERNEL_PARAMETERS = re.compile(r"^GRUB_CMDLINE_LINUX_DEFAULT=\"(.+)\"$")
 
 
 def install_grub_bios(disk: Union[str, Path]):
@@ -23,3 +26,24 @@ def install_grub_efi(prefix: Union[str, Path] = "/mnt"):
         prefix=prefix,
     )
     run_chroot(["grub-mkconfig", "-o", "/boot/grub/grub.cfg"], prefix=prefix)
+
+
+def read_kernel_parameters(prefix: Union[str, Path] = "/mnt") -> List[str]:
+    with open(Path(prefix) / "etc" / "default" / "grub", "r") as fptr:
+        config = fptr.read()
+
+    match = RE_KERNEL_PARAMETERS.search(config)
+    if match is None:
+        return []
+
+    return match.group(1).split()
+
+
+def write_kernel_parameters(parameters: List[str], prefix: Union[str, Path] = "/mnt"):
+    line = 'GRUB_CMDLINE_LINUX_DEFAULT="{}"'.format(" ".join(parameters))
+    with open(Path(prefix) / "etc" / "default" / "grub", "r") as fptr:
+        config, num = RE_KERNEL_PARAMETERS.subn(line, fptr.read())
+        if num < 1:
+            config += "\n" + line
+    with open(Path(prefix) / "etc" / "default" / "grub", "w") as fptr:
+        fptr.write(config)
