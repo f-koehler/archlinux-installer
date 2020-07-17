@@ -22,7 +22,7 @@ def read_hooks() -> List[str]:
     return match.group(1).split()
 
 
-def set_hooks(hooks: List[str]):
+def write_hooks(hooks: List[str]):
     line = "HOOKS=({})".format(" ".join(hooks))
     with open("/mnt/etc/mkinitcpio.conf", "r") as fptr:
         config, num = RE_HOOKS.subn(line, fptr.read())
