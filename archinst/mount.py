@@ -1,13 +1,38 @@
-import subprocess
 from contextlib import contextmanager
-from logging import getLogger
 from pathlib import Path
-from typing import List, Union
+from typing import List, Union, Dict
+import traceback
 
 from archinst.cmd import run
 from archinst.fs import FileSystem
+from archinst import log
 
-LOGGER = getLogger(__name__)
+LOGGER = log.get_logger(__name__)
+
+
+def _shorten_message(exception: Exception) -> str:
+    full_message = str(exception)
+    if len(full_message) > 80:
+        message = full_message[:80] + " …"
+    else:
+        message = full_message
+
+    return message + " (see above)"
+
+
+class UnmountingExceptions(Exception):
+    def __init__(self, exceptions: Dict[FileSystem, Exception]):
+        self.exceptions = exceptions
+        super().__init__(
+            "{\n"
+            + "\n\t".join(
+                (
+                    fs.mount_point + ": " + _shorten_message(exceptions[fs])
+                    for fs in exceptions
+                )
+            )
+            + "\n}"
+        )
 
 
 def mount_filesystem(filesystem: FileSystem):
@@ -66,7 +91,7 @@ def unmount_filesystem(filesystem: FileSystem):
 
 
 @contextmanager
-def mount(filesystem: Union[FileSystem, List[FileSystem]]):
+def mount(filesystem: Union[FileSystem, List[FileSystem]], unmount: bool = True):
     if isinstance(filesystem, FileSystem):
         filesystems = [
             filesystem,
@@ -79,8 +104,19 @@ def mount(filesystem: Union[FileSystem, List[FileSystem]]):
             mount_filesystem(fs)
         yield
     finally:
-        for fs in reversed(filesystems):
-            try:
-                unmount_filesystem(fs)
-            except:
-                pass
+        if unmount:
+            unmount_exceptions: Dict[FileSystem, Exception] = {}
+            for fs in reversed(filesystems):
+                try:
+                    unmount_filesystem(fs)
+                except Exception as ex:
+                    LOGGER.error(
+                        'unmounting the filesystem mounted at "%s" raised an exception',
+                        fs.mount_point,
+                    )
+                    LOGGER.error("exception: %s", traceback.format_exc())
+                    LOGGER.error("I will unmount the remaining filesystems")
+                    unmount_exceptions[fs] = ex
+
+            if unmount_exceptions:
+                raise UnmountingExceptions(unmount_exceptions)

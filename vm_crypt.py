@@ -2,7 +2,7 @@
 import argparse
 
 from archinst import fs, grub, time
-from archinst.initcpio import mkinitcpio
+from archinst import initcpio
 from archinst.mount import mount
 from archinst.part import PartitionLayout
 from archinst.pkg import pacstrap
@@ -34,20 +34,34 @@ if __name__ == "__main__":
             with mount(subvolumes):
                 fs.generate_fstab()
 
-            run_reflector("Germany", "/")
-            pacstrap(
-                [
-                    "base",
-                    "base-devel",
-                    "linux",
-                    "linux-firmware",
-                    "btrfs-progs",
-                    "grub-btrfs",
-                ]
-            )
-            run_reflector("Germany")
+                run_reflector("Germany", "/")
+                pacstrap(
+                    [
+                        "base",
+                        "base-devel",
+                        "linux",
+                        "linux-firmware",
+                        "btrfs-progs",
+                        "grub-btrfs",
+                    ]
+                )
+                run_reflector("Germany")
 
-            time.set_timezone("Europe/Berlin")
-            time.enable_ntp()
-            mkinitcpio()
-            grub.install_grub_efi()
+                time.set_timezone("Europe/Berlin")
+                time.enable_ntp()
+
+                hooks = initcpio.read_hooks()
+                initcpio.insert_hook_after(hooks, "keyboard", "autodetect")
+                initcpio.insert_hook_after(hooks, "keymap", "keyboard")
+                initcpio.insert_hook_after(hooks, "consolefont", "keymap")
+                initcpio.insert_hook_after(hooks, "encrypt", "block")
+                initcpio.insert_hook_after(hooks, "btrfs", "filesystems")
+                initcpio.write_hooks(hooks)
+                initcpio.mkinitcpio()
+
+                parameters = grub.read_kernel_parameters()
+                parameters.append("cryptdevice=" + part_root.get_uuid() + ":root")
+                parameters.append("root=/dev/mapper/root")
+                grub.remove_matching_kernel_parameters(parameters, "^root=")
+                grub.write_kernel_parameters(parameters)
+                grub.install_grub_efi()

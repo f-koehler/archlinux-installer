@@ -11,8 +11,8 @@ def mkinitcpio(prefix: Union[str, Path] = "/mnt"):
     run_chroot(["mkinitcpio", "-P"], prefix=prefix)
 
 
-def read_hooks() -> List[str]:
-    with open("/mnt/etc/mkinitcpio.conf", "r") as fptr:
+def read_hooks(prefix: Union[str, Path] = "/mnt") -> List[str]:
+    with open(Path(prefix) / "etc" / "mkinitcpio.conf", "r") as fptr:
         config = fptr.read()
 
     match = RE_HOOKS.search(config)
@@ -22,13 +22,13 @@ def read_hooks() -> List[str]:
     return match.group(1).split()
 
 
-def set_hooks(hooks: List[str]):
+def write_hooks(hooks: List[str], prefix: Union[str, Path] = "/mnt"):
     line = "HOOKS=({})".format(" ".join(hooks))
-    with open("/mnt/etc/mkinitcpio.conf", "r") as fptr:
+    with open(Path(prefix) / "etc" / "mkinitcpio.conf", "r") as fptr:
         config, num = RE_HOOKS.subn(line, fptr.read())
         if num < 1:
             config += "\n" + line
-    with open("/mnt/etc/mkinitcpio.conf", "w") as fptr:
+    with open(Path(prefix) / "etc" / "mkinitcpio.conf", "w") as fptr:
         fptr.write(config)
 
 
