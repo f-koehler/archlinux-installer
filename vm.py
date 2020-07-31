@@ -63,14 +63,3 @@ if __name__ == "__main__":
         user.add_sudoer("fkoehler")
         user.set_password("fkoehler", "test")
         user.set_password("root", "root")
-
-        git.clone(
-            "https://github.com/f-koehler/dotfiles.git",
-            "/mnt/home/fkoehler/code/dotfiles",
-        )
-        cmd.run_chroot(
-            ["./run"],
-            username="fkoehler",
-            group="fkoehler",
-            cwd="/home/fkoehler/code/dotfiles",
-        )
