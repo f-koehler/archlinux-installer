@@ -94,7 +94,10 @@ def create_btrfs(
     run(cmd)
 
     return BtrfsFileSystem(
-        block_device, label=label, mount_point=mount_point, mount_options=mount_options,
+        block_device,
+        label=label,
+        mount_point=mount_point,
+        mount_options=mount_options,
     )
 
 
