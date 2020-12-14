@@ -8,7 +8,7 @@ authors = ["Fabian Köhler <fabian.koehler@protonmail.ch>"]
 python = "^3.8"
 
 [tool.poetry.dev-dependencies]
-bandit = "1.6.3"
+bandit = "1.7.0"
 flake8 = "3.8.4"
 isort = "5.6.4"
 jedi = "0.17.2"
